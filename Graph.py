@@ -1,3 +1,4 @@
+from turtle import position
 from conversions import *
 import tkinter as tk
 import math
@@ -44,47 +45,45 @@ class Graph:
         print(self.adjacencyMatrix)
         print(self.incidenceMatrix)
 
-    def draw(self, img_width=600, img_height=600):
-        
-        print("here")
-        print(self.adjacencyMatrix)
-        self.temp = self.adjacencyMatrix
-
-        if self.temp is None:
-            print("Graph is empty (no temp) - cannot draw the graph.")
+    def draw(self):
+        if self.adjacencyMatrix is None:
+            print("Empty graph - cannot draw the graph.")
             return
+        width = height = 800
+        n = len(self.adjacencyMatrix)
+        alfa = 2 * math.pi / n
 
-        n = len(self.temp)
-        angle = 2 * math.pi / n
+        center_x = width / 2
+        center_y = height / 2
+        R = center_x * 3/4
+        r = R / n * (1 if n > 2 else 0.5)
 
-        g_center_width = img_width / 2
-        g_center_height = img_height / 2
-        g_r = g_center_width * 2 / 3
-        v_r = g_r / n * (1 if n > 2 else 0.5)
+        window = tk.Tk()
+        window.geometry("800x800")
+        canvas = tk.Canvas(window, height=height, width=width, bg="white")
 
-        root = tk.Tk()
-        root.geometry(str(img_height)+"x"+str(img_width))
-        canvas = tk.Canvas(root, height=img_height, width=img_width, bg="white")
-
-        positions = [[0.0]*2 for _ in range(n)]
+        positions=[]
 
         for i in range(n):
-            v_angle = i * angle
-            positions[i][0] = g_center_height + (g_r * math.sin(v_angle) if n > 1 else 0)
-            positions[i][1] = g_center_width - (g_r * math.cos(v_angle) if n > 1 else 0)
+            v_angle = i * alfa
+            positions.append([0.0, 0.0])
+            if n > 1:
+                positions[i][0] = center_y + R * math.sin(v_angle)
+                positions[i][1] = center_x - R * math.cos(v_angle)
 
-            fill_color = "black"
-
-            canvas.create_oval(positions[i][0]-v_r, positions[i][1]-v_r,
-                               positions[i][0]+v_r, positions[i][1]+v_r,
-                               fill=fill_color)
-            canvas.create_text(positions[i][0] + (1 + n/7) * v_r * math.sin(v_angle),
-                               positions[i][1] - (1 + n/7) * v_r * math.cos(v_angle),
-                               text=i+1, font=("Verdana", max(int(20 - 2*n/10), 10)))
         for i in range(1, n):
             for j in range(0, i):
-                if self.temp[i][j] is 1:
+                if self.adjacencyMatrix[i][j] == 1:
                     canvas.create_line(positions[i][0], positions[i][1], positions[j][0], positions[j][1], fill="black")
 
+        for i in range(n):
+            v_angle = i * alfa
+            canvas.create_oval(positions[i][0]-r, positions[i][1]-r,
+                               positions[i][0]+r, positions[i][1]+r,
+                               fill="green", outline="black", width=3)
+            canvas.create_text(positions[i][0] + (1 + n/7) * r * math.sin(v_angle),
+                               positions[i][1] - (1 + n/7) * r * math.cos(v_angle),
+                               text=i+1, font=("Verdana", max(int(20 - 2*n/10), 10)))
+
         canvas.pack()
-        root.mainloop()
+        window.mainloop()
