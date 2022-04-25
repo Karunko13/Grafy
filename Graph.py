@@ -7,7 +7,6 @@ class Graph:
     adjacencyMatrix = None  # macierz sasiedztwa
     adjacencyList = None  # lista sasiedztwa
     incidenceMatrix = None  # macierz incydencji
-    temp = None
 
     def __init__(self, file_path=None, graph_representation="a_m"):
         if file_path is None:
