@@ -1,14 +1,10 @@
-import sys
 from conversions import *
 from Graph import Graph
-from generators import *
+from degree_sequence import print_graphical
 
 if __name__ == '__main__':
-    # g1 = Graph("z1_am.txt", "a_m", True)
-    # g1.print_all_representations()
-    # g1.draw()
-    print(generate_n_l(12, 12, 'test2.txt'))
-    #print(generate_n_p(9, 0.5, 'test.txt'))
-    g1 = Graph("test2.txt", "a_m")
+    g1 = Graph("z1_am.txt", "a_m")
+    g1.print_all_representations()
     g1.draw()
 
+    print_graphical([4,2,2,3,2,1,4,2,2,2,2])
