@@ -8,30 +8,47 @@ class Graph:
     adjacencyList = None  # lista sasiedztwa
     incidenceMatrix = None  # macierz incydencji
 
-    def __init__(self, file_path=None, graph_representation="a_m"):
-        if file_path is None:
-            data = [[None]]
-        else:
-            with open(file_path, 'r') as f:
-                data = [[int(val) if '0' not in val else 0 for val in line.split(' ')] if line != '\n' else [] for
-                        line in f]
+    def __init__(self, file_path=None, graph_representation="a_m", flag=True):
+        if flag:
+            if file_path is None:
+                data = [[None]]
+            else:
+                with open(file_path, 'r') as f:
+                    data = [[int(val) if '0' not in val else 0 for val in line.split(' ')] if line != '\n' else [] for
+                            line in f]
 
-        print("Graph represented by " + ("adjacency matrix." if graph_representation == "a_m"
-                                         else ("incidence matrix." if graph_representation == "i_m" else "adjacency list.")))
-        if graph_representation == "a_m":
-            self.adjacencyMatrix = data
-            self.adjacencyList = adj_matrix_to_adj_list(self.adjacencyMatrix)
-            self.incidenceMatrix = adj_matrix_to_inc_matrix(
-                self.adjacencyMatrix)
-        elif graph_representation == "i_m":
-            self.incidenceMatrix = data
-            self.adjacencyMatrix = inc_matrix_to_adj_matrix(
-                self.incidenceMatrix)
-            self.adjacencyList = inc_matrix_to_adj_list(self.incidenceMatrix)
+            print("Graph represented by " + ("adjacency matrix." if graph_representation == "a_m"
+                                            else ("incidence matrix." if graph_representation == "i_m" else "adjacency list.")))
+            if graph_representation == "a_m":
+                self.adjacencyMatrix = data
+                self.adjacencyList = adj_matrix_to_adj_list(self.adjacencyMatrix)
+                self.incidenceMatrix = adj_matrix_to_inc_matrix(
+                    self.adjacencyMatrix)
+            elif graph_representation == "i_m":
+                self.incidenceMatrix = data
+                self.adjacencyMatrix = inc_matrix_to_adj_matrix(
+                    self.incidenceMatrix)
+                self.adjacencyList = inc_matrix_to_adj_list(self.incidenceMatrix)
+            else:
+                self.adjacencyList = data
+                self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
+                self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
         else:
-            self.adjacencyList = data
-            self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
-            self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+            data = file_path
+            if graph_representation == "a_m":
+                self.adjacencyMatrix = data
+                self.adjacencyList = adj_matrix_to_adj_list(self.adjacencyMatrix)
+                self.incidenceMatrix = adj_matrix_to_inc_matrix(
+                    self.adjacencyMatrix)
+            elif graph_representation == "i_m":
+                self.incidenceMatrix = data
+                self.adjacencyMatrix = inc_matrix_to_adj_matrix(
+                    self.incidenceMatrix)
+                self.adjacencyList = inc_matrix_to_adj_list(self.incidenceMatrix)
+            else:
+                self.adjacencyList = data
+                self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
+                self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
 
     def __str__(self):
         return str(self.print_all_representations())
