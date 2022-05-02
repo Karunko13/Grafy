@@ -1,5 +1,5 @@
 from turtle import position
-from conversions import *
+from utils.conversions import *
 import tkinter as tk
 import math
 
@@ -7,6 +7,7 @@ class Graph:
     adjacencyMatrix = None  # macierz sasiedztwa
     adjacencyList = None  # lista sasiedztwa
     incidenceMatrix = None  # macierz incydencji
+     #najdłuższa spójna składowa
 
     def __init__(self, file_path=None, graph_representation="a_m", flag=True):
         if flag:
@@ -17,8 +18,8 @@ class Graph:
                     data = [[int(val) if '0' not in val else 0 for val in line.split(' ')] if line != '\n' else [] for
                             line in f]
 
-            print("Graph represented by " + ("adjacency matrix." if graph_representation == "a_m"
-                                            else ("incidence matrix." if graph_representation == "i_m" else "adjacency list.")))
+            # print("Graph represented by " + ("adjacency matrix." if graph_representation == "a_m"
+            #                                 else ("incidence matrix." if graph_representation == "i_m" else "adjacency list.")))
             if graph_representation == "a_m":
                 self.adjacencyMatrix = data
                 self.adjacencyList = adj_matrix_to_adj_list(self.adjacencyMatrix)
@@ -49,6 +50,10 @@ class Graph:
                 self.adjacencyList = data
                 self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
                 self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+        
+        longest_comp = self.components()
+        print(longest_comp)
+            
 
     def __str__(self):
         return str(self.print_all_representations())
@@ -105,3 +110,40 @@ class Graph:
 
         canvas.pack()
         window.mainloop()
+    
+    def components(self):
+        nr = 0
+        temp_graph = self.adjacencyList
+        comps = [-1]*len(temp_graph.keys())
+
+        for temp in temp_graph.keys():
+            if comps[temp-1] == -1:
+                nr += 1
+                comps[temp-1] = nr
+                components_recursive(nr, temp, temp_graph, comps)
+        
+        comps_representation = defaultdict(list)
+
+        for i in range(len(comps)):
+            comps_representation[comps[i]].append(i+1)
+
+        max_number = 0
+        max_number_length = 0
+
+        for i in range(len(comps_representation.keys())):
+            temp = len(comps_representation.get(i+1))
+            if(temp > max_number_length):
+                max_number_length = temp
+                max_number = i+1
+
+        # print(comps_representation)
+        # comps_representation.get(max_number)
+
+        longest_vert = comps_representation.get(max_number)
+        return longest_vert
+
+def components_recursive(nr, vertex, graph, comps):
+    for temp in graph[vertex]:
+        if comps[temp-1] == -1:
+            comps[temp-1] = nr
+            components_recursive(nr, temp, graph, comps)
