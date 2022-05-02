@@ -8,7 +8,7 @@ class Graph:
     adjacencyList = None  # lista sasiedztwa
     incidenceMatrix = None  # macierz incydencji
     longest_comp = None #najdłuższa spójna składowa
-
+    
     def __init__(self, file_path=None, graph_representation="a_m", flag=True):
         if flag:
             if file_path is None:
@@ -34,13 +34,22 @@ class Graph:
                 self.incidenceMatrix)
             self.adjacencyList = inc_matrix_to_adj_list(self.incidenceMatrix)
         else:
-            self.adjacencyList = data
-            self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
-            self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
-        
+            if flag:
+                key_values = list(range(1,len(data)+1))
+                list_of_dict = dict(zip(key_values, data))
+                list_of_dict_2 = defaultdict(list, list_of_dict)
+
+                self.adjacencyList = list_of_dict_2
+                self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
+                self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+
+            else:
+                self.adjacencyList = data
+                self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
+                self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+
         self.longest_comp = self.components()
             
-
     def __str__(self):
         return str(self.print_all_representations())
 
@@ -104,10 +113,10 @@ class Graph:
     
     def components(self):
         nr = 0
-        temp_graph = self.adjacencyList
+        temp_graph = self.adjacencyList.copy()
         comps = [-1]*len(temp_graph.keys())
 
-        for temp in temp_graph.keys():
+        for temp in list(temp_graph):
             if comps[temp-1] == -1:
                 nr += 1
                 comps[temp-1] = nr
@@ -126,12 +135,45 @@ class Graph:
             if(temp > max_number_length):
                 max_number_length = temp
                 max_number = i+1
-
         longest_vert = comps_representation.get(max_number)
+        
         return longest_vert
 
 def components_recursive(nr, vertex, graph, comps):
     for temp in graph[vertex]:
         if comps[temp-1] == -1:
-            comps[temp-1] = nr
-            components_recursive(nr, temp, graph, comps)
+                comps[temp-1] = nr
+                components_recursive(nr, temp, graph, comps)
+
+    
+    # def check_hamilton(self):
+
+    #     temp_list = self.adjacencyList
+    #     first_node = 1
+    #     number_of_nodes = len(temp_list.keys())
+    #     path = [first_node]
+    #     visited_nodes = [-1]*number_of_nodes
+    #     visited_nodes[first_node-1] = 1
+        
+    #     print(number_of_nodes)
+    #     print(path)
+    #     print(visited_nodes)
+    #     #self.hamilton_recursive(temp_list, number_of_nodes, first_node, visited_nodes, path)
+
+    # def hamilton_recursive(self,temp_list, number_of_nodes, first_node, visited_nodes, path):
+        
+    #     if len(path) == number_of_nodes and path[0] in temp_list[path[number_of_nodes-1]]:
+    #         print(path)
+        
+    #     for node in temp_list[first_node]:
+    #         if not visited_nodes[node]:
+    #             visited_nodes[node] = 1
+    #             path.append(node)
+
+    #             self.hamilton_recursive(temp_list, number_of_nodes, node, visited_nodes, path)
+    #             visited_nodes[node] = -1
+    #             path.pop()
+
+
+
+
