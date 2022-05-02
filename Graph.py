@@ -7,16 +7,15 @@ class Graph:
     adjacencyMatrix = None  # macierz sasiedztwa
     adjacencyList = None  # lista sasiedztwa
     incidenceMatrix = None  # macierz incydencji
-    longest_comp = None #najdłuższa spójna składowa
+    longest_comp = None # najdłuższa spójna składowa
     
-    def __init__(self, file_path=None, graph_representation="a_m", flag=True):
-        if flag:
+    def __init__(self, file_path=None, graph_representation="a_m"):
+        if type(file_path) is str:
             if file_path is None:
                 data = [[None]]
             else:
                 with open(file_path, 'r') as f:
-                    data = [[int(val) if '0' not in val else 0 for val in line.split(' ')] if line != '\n' else [] for
-                            line in f]
+                    data = [[int(val) for val in line.split(' ')] if line != '\n' else [] for line in f]
 
             print("Graph represented by " + ("adjacency matrix." if graph_representation == "a_m"
                                             else ("incidence matrix." if graph_representation == "i_m" else "adjacency list.")))
@@ -24,22 +23,19 @@ class Graph:
             data = file_path
 
         if graph_representation == "a_m":
-            self.adjacencyMatrix = data
+            self.adjacencyMatrix = np.copy(data)
             self.adjacencyList = adj_matrix_to_adj_list(self.adjacencyMatrix)
-            self.incidenceMatrix = adj_matrix_to_inc_matrix(
-                self.adjacencyMatrix)
+            self.incidenceMatrix = adj_matrix_to_inc_matrix(self.adjacencyMatrix)
         elif graph_representation == "i_m":
-            self.incidenceMatrix = data
-            self.adjacencyMatrix = inc_matrix_to_adj_matrix(
-                self.incidenceMatrix)
+            self.incidenceMatrix = np.copy(data)
+            self.adjacencyMatrix = inc_matrix_to_adj_matrix(self.incidenceMatrix)
             self.adjacencyList = inc_matrix_to_adj_list(self.incidenceMatrix)
         else:
-            if flag:
+            if type(file_path) is str:
                 key_values = list(range(1,len(data)+1))
-                list_of_dict = dict(zip(key_values, data))
-                list_of_dict_2 = defaultdict(list, list_of_dict)
+                list_of_dict = defaultdict(list, dict(zip(key_values, data)))
 
-                self.adjacencyList = list_of_dict_2
+                self.adjacencyList = list_of_dict
                 self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
                 self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
 
@@ -114,13 +110,14 @@ class Graph:
     def components(self):
         nr = 0
         temp_graph = self.adjacencyList.copy()
+        #print(temp_graph)
         comps = [-1]*len(temp_graph.keys())
 
         for temp in list(temp_graph):
             if comps[temp-1] == -1:
                 nr += 1
                 comps[temp-1] = nr
-                components_recursive(nr, temp, temp_graph, comps)
+                self.components_recursive(nr, temp, temp_graph, comps)
         
         comps_representation = defaultdict(list)
 
@@ -136,14 +133,13 @@ class Graph:
                 max_number_length = temp
                 max_number = i+1
         longest_vert = comps_representation.get(max_number)
-        
         return longest_vert
 
-def components_recursive(nr, vertex, graph, comps):
-    for temp in graph[vertex]:
-        if comps[temp-1] == -1:
-                comps[temp-1] = nr
-                components_recursive(nr, temp, graph, comps)
+    def components_recursive(self, nr, vertex, graph, comps):
+        for temp in graph[vertex]:
+            if comps[temp-1] == -1:
+                    comps[temp-1] = nr
+                    self.components_recursive(nr, temp, graph, comps)
 
     
     # def check_hamilton(self):

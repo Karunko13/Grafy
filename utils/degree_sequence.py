@@ -39,7 +39,7 @@ def graphical_to_graph(A):
             A_dict = OrderedDict(sorted(A_dict.items(), key=lambda x: x[1], reverse=True))
             if all(x==0 for x in A_dict):
                 break
-        return Graph(adj_l, 'a_l', False)
+        return Graph(adj_l, 'a_l')
     else:
         raise ValueError('not graphical')
 
