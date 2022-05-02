@@ -7,7 +7,7 @@ class Graph:
     adjacencyMatrix = None  # macierz sasiedztwa
     adjacencyList = None  # lista sasiedztwa
     incidenceMatrix = None  # macierz incydencji
-     #najdłuższa spójna składowa
+    longest_comp = None #najdłuższa spójna składowa
 
     def __init__(self, file_path=None, graph_representation="a_m", flag=True):
         if flag:
@@ -18,41 +18,27 @@ class Graph:
                     data = [[int(val) if '0' not in val else 0 for val in line.split(' ')] if line != '\n' else [] for
                             line in f]
 
-            # print("Graph represented by " + ("adjacency matrix." if graph_representation == "a_m"
-            #                                 else ("incidence matrix." if graph_representation == "i_m" else "adjacency list.")))
-            if graph_representation == "a_m":
-                self.adjacencyMatrix = data
-                self.adjacencyList = adj_matrix_to_adj_list(self.adjacencyMatrix)
-                self.incidenceMatrix = adj_matrix_to_inc_matrix(
-                    self.adjacencyMatrix)
-            elif graph_representation == "i_m":
-                self.incidenceMatrix = data
-                self.adjacencyMatrix = inc_matrix_to_adj_matrix(
-                    self.incidenceMatrix)
-                self.adjacencyList = inc_matrix_to_adj_list(self.incidenceMatrix)
-            else:
-                self.adjacencyList = data
-                self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
-                self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+            print("Graph represented by " + ("adjacency matrix." if graph_representation == "a_m"
+                                            else ("incidence matrix." if graph_representation == "i_m" else "adjacency list.")))
         else:
             data = file_path
-            if graph_representation == "a_m":
-                self.adjacencyMatrix = data
-                self.adjacencyList = adj_matrix_to_adj_list(self.adjacencyMatrix)
-                self.incidenceMatrix = adj_matrix_to_inc_matrix(
-                    self.adjacencyMatrix)
-            elif graph_representation == "i_m":
-                self.incidenceMatrix = data
-                self.adjacencyMatrix = inc_matrix_to_adj_matrix(
-                    self.incidenceMatrix)
-                self.adjacencyList = inc_matrix_to_adj_list(self.incidenceMatrix)
-            else:
-                self.adjacencyList = data
-                self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
-                self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+
+        if graph_representation == "a_m":
+            self.adjacencyMatrix = data
+            self.adjacencyList = adj_matrix_to_adj_list(self.adjacencyMatrix)
+            self.incidenceMatrix = adj_matrix_to_inc_matrix(
+                self.adjacencyMatrix)
+        elif graph_representation == "i_m":
+            self.incidenceMatrix = data
+            self.adjacencyMatrix = inc_matrix_to_adj_matrix(
+                self.incidenceMatrix)
+            self.adjacencyList = inc_matrix_to_adj_list(self.incidenceMatrix)
+        else:
+            self.adjacencyList = data
+            self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
+            self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
         
-        longest_comp = self.components()
-        print(longest_comp)
+        self.longest_comp = self.components()
             
 
     def __str__(self):
@@ -84,7 +70,7 @@ class Graph:
         canvas = tk.Canvas(window, height=height, width=width, bg="white")
 
         positions = []
-        # set positions of verticles
+        # set positions of vertices
         for i in range(n):
             positions.append([0.0, 0.0])
             if n > 1:
@@ -99,11 +85,16 @@ class Graph:
                 if self.adjacencyMatrix[i][j] == 1:
                     canvas.create_line(
                         positions[i][0], positions[i][1], positions[j][0], positions[j][1], fill="black", width=2)
-        #draw verticles and numbers
+        #draw vertices and numbers
         for i in range(n):
-            canvas.create_oval(positions[i][0]-r, positions[i][1]-r,
-                               positions[i][0]+r, positions[i][1]+r,
-                               fill="lime", outline="black", width=3)
+            if (i+1) in self.longest_comp:
+                canvas.create_oval(positions[i][0]-r, positions[i][1]-r,
+                                positions[i][0]+r, positions[i][1]+r,
+                                fill="red", outline="black", width=3)
+            else:
+                canvas.create_oval(positions[i][0]-r, positions[i][1]-r,
+                                   positions[i][0]+r, positions[i][1]+r,
+                                   fill="lime", outline="black", width=3)
             canvas.create_text(positions[i][0],
                                positions[i][1],
                                text=i+1, font=("Comic Sans", int(3*r/4), "bold"), anchor=tk.CENTER)
@@ -135,9 +126,6 @@ class Graph:
             if(temp > max_number_length):
                 max_number_length = temp
                 max_number = i+1
-
-        # print(comps_representation)
-        # comps_representation.get(max_number)
 
         longest_vert = comps_representation.get(max_number)
         return longest_vert
