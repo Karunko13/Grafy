@@ -1,4 +1,3 @@
-from turtle import position
 from utils.conversions import *
 import tkinter as tk
 import math
@@ -84,6 +83,7 @@ class Graph:
             else:
                 positions[i][0] = center_x
                 positions[i][1] = center_y
+        canvas.create_oval(center_x-R, center_y-R, center_x+R, center_y+R, outline="blue", width=3, dash=(5, 1))
         #draw edges
         for i in range(1, n):
             for j in range(0, i):
@@ -110,8 +110,7 @@ class Graph:
     def components(self):
         nr = 0
         temp_graph = self.adjacencyList.copy()
-        #print(temp_graph)
-        comps = [-1]*len(temp_graph.keys())
+        comps = [-1]*max(temp_graph.keys())
 
         for temp in list(temp_graph):
             if comps[temp-1] == -1:
@@ -127,7 +126,7 @@ class Graph:
         max_number = 0
         max_number_length = 0
 
-        for i in range(len(comps_representation.keys())):
+        for i in range(0, max(comps_representation.keys())):
             temp = len(comps_representation.get(i+1))
             if(temp > max_number_length):
                 max_number_length = temp
@@ -142,34 +141,36 @@ class Graph:
                     self.components_recursive(nr, temp, graph, comps)
 
     
-    # def check_hamilton(self):
+    def check_hamilton(self):
 
-    #     temp_list = self.adjacencyList
-    #     first_node = 1
-    #     number_of_nodes = len(temp_list.keys())
-    #     path = [first_node]
-    #     visited_nodes = [-1]*number_of_nodes
-    #     visited_nodes[first_node-1] = 1
+        first_node = 1
+        number_of_nodes = len(self.adjacencyList.keys())
+        path = [first_node]
+        visited_nodes = [-1]*number_of_nodes
+        visited_nodes[first_node-1] = 1
+
+        self.hamilton_recursive(self.adjacencyList, number_of_nodes, first_node, visited_nodes, path)
+        try:
+            hamilton_path
+        except NameError:
+            print("Graph is not hamiltonian.")
+        else:
+            print("Graph is hamiltonian. Found path:")
+            print(hamilton_path)
+
+    def hamilton_recursive(self, list, number_of_nodes, first_node, visited_nodes, path):
         
-    #     print(number_of_nodes)
-    #     print(path)
-    #     print(visited_nodes)
-    #     #self.hamilton_recursive(temp_list, number_of_nodes, first_node, visited_nodes, path)
-
-    # def hamilton_recursive(self,temp_list, number_of_nodes, first_node, visited_nodes, path):
+        if len(path) == number_of_nodes and path[0] in list[path[number_of_nodes-1]]:
+            path.append(path[0])
+            global hamilton_path
+            hamilton_path=path.copy()
+            path.pop()
         
-    #     if len(path) == number_of_nodes and path[0] in temp_list[path[number_of_nodes-1]]:
-    #         print(path)
-        
-    #     for node in temp_list[first_node]:
-    #         if not visited_nodes[node]:
-    #             visited_nodes[node] = 1
-    #             path.append(node)
+        for node in list[first_node]:
+            if visited_nodes[node-1] == -1:
+                visited_nodes[node-1] = 1
+                path.append(node)
 
-    #             self.hamilton_recursive(temp_list, number_of_nodes, node, visited_nodes, path)
-    #             visited_nodes[node] = -1
-    #             path.pop()
-
-
-
-
+                self.hamilton_recursive(list, number_of_nodes, node, visited_nodes, path)
+                visited_nodes[node-1] = -1
+                path.pop()
