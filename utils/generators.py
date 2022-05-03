@@ -66,6 +66,6 @@ def generate_n_p(vertices: int, probability: float, filename='') -> np.ndarray:
         return a
 
 
-if __name__ == '__main__':
-    print(generate_n_l(6, 1, 'test2.txt'))
-    print(generate_n_p(9, 0.5, 'test.txt'))
+# if __name__ == '__main__':
+#     print(generate_n_l(6, 1, 'test2.txt'))
+#     print(generate_n_p(9, 0.5, 'test.txt'))
