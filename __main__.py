@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # g3=Graph('txt_files/test.txt', "a_m")
     # g3.draw()
 
-    g2 = Graph(randomize_graph([4,2,2,3,2,1,4,2,2,2,2], 10), "a_l") #not graphical sequence
+    g2 = Graph(randomize_graph([4,2,2,3,2,1,4,2,2,2,2], 10), "a_l")
     g2.draw()
 
 
