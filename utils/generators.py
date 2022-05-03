@@ -3,10 +3,8 @@ import numpy as np
 
 def generate_n_l(vertices: int, edges: int, filename='') -> np.ndarray:
     """Graph adjacency matrix generation using number of vertices and number of edges.
-
     Function that generates graph's adjacency matrix based on input data. ValueError is raised when the input data
     is not valid. If file name is provided, function will save it's output into file.
-
     :param filename: (optional) Name of file to save adjacency matrix into.
     :param vertices: Number of vertices in graph. Must be higher than 0. It tells the size of output matrix.
     :param edges: Number of edges in graph. Must be in 0 to n(n-1)/2 range, where n is the number of vertices. It
@@ -38,10 +36,8 @@ def generate_n_l(vertices: int, edges: int, filename='') -> np.ndarray:
 
 def generate_n_p(vertices: int, probability: float, filename='') -> np.ndarray:
     """Graph adjacency matrix generation using number of vertices and edge probability.
-
     Function that generates graph's adjacency matrix based on input data. ValueError is raised when the input data
     is not valid. If file name is provided, function will save it's output into file.
-
     :param filename: (optional) Name of file to save adjacency matrix into.
     :param vertices: Number of vertices in graph. Must be higher than 0. It tells the size of output matrix.
     :param probability: Probability of edge between two vertices. Must be in the 0 to 1 range. It is a probability

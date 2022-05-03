@@ -6,7 +6,6 @@ from Graph import Graph
 
 
 def swap(x1, x2, y1, y2, adjacency_list):
-
     adjacency_list[x1].append(y1)
     adjacency_list[y1].append(x1)
     adjacency_list[x2].append(y2)
@@ -14,7 +13,6 @@ def swap(x1, x2, y1, y2, adjacency_list):
 
 
 def delete_edge(v1, v2, adjacency_list):
-
     adjacency_list[v1].remove(v2)
     adjacency_list[v2].remove(v1)
 
@@ -63,7 +61,6 @@ def generate_k_regular_graph(vertices_number, k):
 
 
     if (vertices_number >= k + 1 and vertices_number * k % 2 == 0):
-
         degree_sequence = [k] * vertices_number
         adj_list = randomize_graph(degree_sequence, 10)
-        return Graph(adj_list, 'a_l', False)
+        return Graph(adj_list, 'a_l')

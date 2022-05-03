@@ -39,13 +39,18 @@ def graphical_to_graph(A):
             A_dict = OrderedDict(sorted(A_dict.items(), key=lambda x: x[1], reverse=True))
             if all(x==0 for x in A_dict):
                 break
-        return Graph(adj_l, 'a_l')
+        #return Graph(adj_l, 'a_l', False)
+        return adj_l
     else:
         raise ValueError('not graphical')
 
 def print_graphical(A):
     try:
-        a = graphical_to_graph(A)
+        a = Graph(graphical_to_graph(A), 'a_l', False)
         a.draw()
     except ValueError as e:
         print(e.args)
+
+# if __name__ == '__main__':
+#     print_graphical([4,2,2,3,2,1,4,2,2,2,2])
+#     print_graphical([4,4,3,1,2])
