@@ -12,8 +12,6 @@ if __name__ == '__main__':
     # g1.components()
     #print_graphical([4,2,2,3,2,1,4,2,2,2,2])
 
-
-
     # g2 = graphical_to_graph([4,2,2,3,2,1,4,2,2,2,2])
     # g2.draw()
     # g2.check_hamilton()
@@ -24,8 +22,6 @@ if __name__ == '__main__':
 
     g2 = Graph(randomize_graph([4,2,2,3,2,1,4,2,2,2,2], 10), "a_l")
     g2.draw()
-
-
 
     #zad 5 k_regular graph
     g3 = generate_k_regular_graph(6, 3)
