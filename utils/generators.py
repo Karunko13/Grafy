@@ -1,4 +1,7 @@
+from random import randrange
 import numpy as np
+from Graph import Graph
+from degree_sequence import graphical_to_graph, is_graphical
 
 
 def generate_n_l(vertices: int, edges: int, filename='') -> np.ndarray:
@@ -62,6 +65,22 @@ def generate_n_p(vertices: int, probability: float, filename='') -> np.ndarray:
         return a
 
 
-# if __name__ == '__main__':
-#     print(generate_n_l(6, 1, 'test2.txt'))
-#     print(generate_n_p(9, 0.5, 'test.txt'))
+def generate_eulerian(vertices: int) -> Graph:
+    msg = ''
+    if vertices < 3:
+        msg += 'Number of vertices must be higher than 2.\n'
+    if msg != '':
+        raise ValueError(msg)
+    else:
+        while True:
+            degree_seq = [randrange(0, vertices, 2) for _ in range(vertices)]
+            if is_graphical(degree_seq.copy()):
+                break
+        adj_list = graphical_to_graph(degree_seq)
+        return Graph(adj_list, 'a_l')
+
+
+if __name__ == '__main__':
+    # print(generate_n_l(6, 1, 'test2.txt'))
+    # print(generate_n_p(9, 0.5, 'test.txt'))
+    generate_eulerian(8).draw()
