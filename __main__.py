@@ -25,11 +25,6 @@ if __name__ == '__main__':
     # g2 = Graph(randomize_graph([4,2,2,3,2,1,4,2,2,2,2], 10), "a_l")
     # g2.draw()
 
-<<<<<<< HEAD
-    # #zad 5 k_regular graph
-    # g3 = generate_k_regular_graph(6, 3)
-    # g3.draw()
-=======
     # Zestaw 2. Zadanie 4:
     test = generate_eulerian(8)  # Generacja grafu eulerowskiego
     G = Graph(test, 'a_l')
@@ -40,4 +35,3 @@ if __name__ == '__main__':
     #zad 5 k_regular graph
     g3 = generate_k_regular_graph(6, 3)
     g3.draw()
->>>>>>> main
