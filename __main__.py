@@ -1,7 +1,8 @@
-from utils.conversions import *
-from utils.degree_sequence import *
-from utils.generators import *
+# from utils.conversions import *
+# from utils.degree_sequence import *
+from utils.generators import generate_eulerian
 from utils.regular_graph_randomization import *
+from utils.euler import get_euler_cycle, pretty_cycle_print
 from Graph import Graph
 
 
@@ -24,6 +25,19 @@ if __name__ == '__main__':
     # g2 = Graph(randomize_graph([4,2,2,3,2,1,4,2,2,2,2], 10), "a_l")
     # g2.draw()
 
+<<<<<<< HEAD
     # #zad 5 k_regular graph
     # g3 = generate_k_regular_graph(6, 3)
     # g3.draw()
+=======
+    # Zestaw 2. Zadanie 4:
+    test = generate_eulerian(8)  # Generacja grafu eulerowskiego
+    G = Graph(test, 'a_l')
+    res = get_euler_cycle(test)  # Wyznaczanie cyklu Eulera
+    pretty_cycle_print(res)  # Wypisywanie cyklu Eulera
+    G.draw()
+
+    #zad 5 k_regular graph
+    g3 = generate_k_regular_graph(6, 3)
+    g3.draw()
+>>>>>>> main
