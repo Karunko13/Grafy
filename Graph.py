@@ -9,7 +9,7 @@ class Graph:
     incidenceMatrix = None  # macierz incydencji
     longest_comp = None # najdłuższa spójna składowa
     weights = None # wagi krawędzi
-    minimumSpanningTree = None # wagi krawędzi
+    minimumSpanningTree = None  # minimalne drzewo rozpinające jako adj_matrix
     
     def __init__(self, file_path=None, graph_representation="a_m"):
         if type(file_path) is str:
@@ -148,9 +148,16 @@ class Graph:
             for j in range(0, i):
                 if self.adjacencyMatrix[i][j] == 1:
                     canvas.create_line(positions[i][0], positions[i][1], positions[j][0], positions[j][1], fill="black", width=2)
-                    canvas.create_text( (positions[i][0] + positions[j][0])/2,
-                                       (positions[i][1] + positions[j][1])/2,
-                                        text=self.weights[(i+1, j+1)], font=("Comic Sans", int(3*r/6), "bold"), anchor=tk.S, stipple="gray75")
+        #draw weights
+        for i in range(1, n):
+            for j in range(0, i):
+                if self.adjacencyMatrix[i][j] == 1:
+                    txt = canvas.create_text((positions[i][0] + positions[j][0])/2,
+                                                (positions[i][1] + positions[j][1])/2,
+                                                text=self.weights[(i+1, j+1)], font=("Comic Sans", int(3*r/6), "bold"))
+                    rect = canvas.create_rectangle(
+                        canvas.bbox(txt), fill="white", outline="black")
+                    canvas.tag_lower(rect, txt)
         #draw vertices and numbers
         for i in range(n):
             if (i+1) in self.longest_comp:
@@ -304,16 +311,24 @@ class Graph:
                     if self.adjacencyMatrix[i][j] == 1:
                         if self.minimumSpanningTree[i][j] == 1:
                             canvas.create_line(positions[i][0], positions[i][1], positions[j][0], positions[j][1], fill="lime", width=2)
-                            txt = canvas.create_text( (positions[i][0] + positions[j][0])/2,
-                                            (positions[i][1] + positions[j][1])/2,
-                                                text=self.weights[(i+1, j+1)], font=("Comic Sans", int(3*r/6), "bold"), anchor=tk.S, stipple="gray75")
+                        else:
+                            canvas.create_line(positions[i][0], positions[i][1], positions[j][0], positions[j][1], fill="black", width=2)
+            #draw weights
+            for i in range(1, n):
+                for j in range(0, i):
+                    if self.adjacencyMatrix[i][j] == 1:
+                        if self.minimumSpanningTree[i][j] == 1:
+                            txt = canvas.create_text((positions[i][0] + positions[j][0])/2,
+                                                     (positions[i][1] + positions[j][1])/2,
+                                                     text=self.weights[(i+1, j+1)], font=("Comic Sans", int(3*r/6), "bold"))
                             rect = canvas.create_rectangle(canvas.bbox(txt), fill="lime")
                             canvas.tag_lower(rect, txt)
                         else:
-                            canvas.create_line(positions[i][0], positions[i][1], positions[j][0], positions[j][1], fill="black", width=2)
-                            canvas.create_text( (positions[i][0] + positions[j][0])/2,
-                                            (positions[i][1] + positions[j][1])/2,
-                                                text=self.weights[(i+1, j+1)], font=("Comic Sans", int(3*r/6), "bold"), anchor=tk.S, stipple="gray75")
+                            txt=canvas.create_text((positions[i][0] + positions[j][0])/2,
+                                               (positions[i][1] + positions[j][1])/2,
+                                               text=self.weights[(i+1, j+1)], font=("Comic Sans", int(3*r/6), "bold"))
+                            rect = canvas.create_rectangle(canvas.bbox(txt), fill="white", outline="black")
+                            canvas.tag_lower(rect, txt)
             #draw vertices and numbers
             for i in range(n):
                 if (i+1) in self.longest_comp:
