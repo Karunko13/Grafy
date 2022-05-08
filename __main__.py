@@ -9,8 +9,9 @@ from Graph import Graph
 if __name__ == '__main__':
     g1 = Graph("txt_files/z1_am.txt", "a_m")
     # g1.print_all_representations()
-    print(g1.weights)
-    g1.draw_with_weights()
+    # print(g1.weights)
+    # g1.draw_with_weights()
+    g1.prim_mst()
     # g1.components()
     #print_graphical([4,2,2,3,2,1,4,2,2,2,2])
 
@@ -26,12 +27,12 @@ if __name__ == '__main__':
     # g2.draw()
 
     # Zestaw 2. Zadanie 4:
-    test = generate_eulerian(8)  # Generacja grafu eulerowskiego
-    G = Graph(test, 'a_l')
-    res = get_euler_cycle(test)  # Wyznaczanie cyklu Eulera
-    pretty_cycle_print(res)  # Wypisywanie cyklu Eulera
-    G.draw()
+    # test = generate_eulerian(8)  # Generacja grafu eulerowskiego
+    # G = Graph(test, 'a_l')
+    # res = get_euler_cycle(test)  # Wyznaczanie cyklu Eulera
+    # pretty_cycle_print(res)  # Wypisywanie cyklu Eulera
+    # G.draw()
 
-    #zad 5 k_regular graph
-    g3 = generate_k_regular_graph(6, 3)
-    g3.draw()
+    # #zad 5 k_regular graph
+    # g3 = generate_k_regular_graph(6, 3)
+    # g3.draw()
