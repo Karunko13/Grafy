@@ -9,6 +9,7 @@ class Graph:
     incidenceMatrix = None  # macierz incydencji
     longest_comp = None # najdłuższa spójna składowa
     weights = None # wagi krawędzi
+    minimumSpanningTree = None  # minimalne drzewo rozpinające jako adj_matrix
     
     def __init__(self, file_path=None, graph_representation="a_m"):
         if type(file_path) is str:
@@ -56,7 +57,6 @@ class Graph:
         print(self.adjacencyList)
         print(self.adjacencyMatrix)
         print(self.incidenceMatrix)
-
     def draw(self):
         if self.adjacencyMatrix is None:
             print("Empty graph - cannot draw the graph.")
@@ -148,9 +148,16 @@ class Graph:
             for j in range(0, i):
                 if self.adjacencyMatrix[i][j] == 1:
                     canvas.create_line(positions[i][0], positions[i][1], positions[j][0], positions[j][1], fill="black", width=2)
-                    canvas.create_text( (positions[i][0] + positions[j][0])/2,
-                                       (positions[i][1] + positions[j][1])/2,
-                                        text=self.weights[(i+1, j+1)], font=("Comic Sans", int(3*r/6), "bold"), anchor=tk.S, stipple="gray75")
+        #draw weights
+        for i in range(1, n):
+            for j in range(0, i):
+                if self.adjacencyMatrix[i][j] == 1:
+                    txt = canvas.create_text((positions[i][0] + positions[j][0])/2,
+                                                (positions[i][1] + positions[j][1])/2,
+                                                text=self.weights[(i+1, j+1)], font=("Comic Sans", int(3*r/6), "bold"))
+                    rect = canvas.create_rectangle(
+                        canvas.bbox(txt), fill="white", outline="black")
+                    canvas.tag_lower(rect, txt)
         #draw vertices and numbers
         for i in range(n):
             if (i+1) in self.longest_comp:
@@ -246,3 +253,95 @@ class Graph:
                     weights.append(random.randint(1, 10))
         
         return defaultdict(list, dict(zip(pair_list, weights)))
+
+    def prim_mst(self):
+        A = defaultdict(list)
+        sets = defaultdict(list)
+        # MAKE-SET
+        for k, v in self.adjacencyList.items():
+            sets[k] = k
+        # posortuj krawedzie niemalejaco wzgledem wag
+        weights = sorted(self.weights_of_edges().items(), key = lambda x: x[1])
+        for k, v in weights:
+            tmp = (sets[k[0]] != sets[k[1]])
+            if (tmp):
+                A[k[0]].append(k[1])
+                A[k[1]].append(k[0])
+                # UNION
+                temp = sets[k[0]]
+                for i in range(1, len(sets)+1):
+                    if sets[i] == temp:
+                        sets[i] = sets[k[1]]
+        self.minimumSpanningTree = adj_list_to_adj_matrix(A)
+        self.print_with_mst()
+    
+    def print_with_mst(self):
+        if self.minimumSpanningTree is not None:
+            width = height = 800
+            n = len(self.adjacencyMatrix)
+            alfa = 2 * math.pi / n
+
+            center_x = width / 2
+            center_y = height / 2
+            R = center_x * 3/4
+            if n > 3:
+                r = R / n
+            else:
+                r = R / n * 0.5
+
+            window = tk.Tk()
+            window.geometry("800x800")
+            canvas = tk.Canvas(window, height=height, width=width, bg="white")
+
+            positions = []
+            # set positions of vertices
+            for i in range(n):
+                positions.append([0.0, 0.0])
+                if n > 1:
+                    positions[i][0] = center_y + R * math.sin(i * alfa)
+                    positions[i][1] = center_x - R * math.cos(i * alfa)
+                else:
+                    positions[i][0] = center_x
+                    positions[i][1] = center_y
+            canvas.create_oval(center_x-R, center_y-R, center_x+R,
+                            center_y+R, outline="blue", width=3, dash=(5, 1))
+            #draw edges
+            for i in range(1, n):
+                for j in range(0, i):
+                    if self.adjacencyMatrix[i][j] == 1:
+                        if self.minimumSpanningTree[i][j] == 1:
+                            canvas.create_line(positions[i][0], positions[i][1], positions[j][0], positions[j][1], fill="lime", width=2)
+                        else:
+                            canvas.create_line(positions[i][0], positions[i][1], positions[j][0], positions[j][1], fill="black", width=2)
+            #draw weights
+            for i in range(1, n):
+                for j in range(0, i):
+                    if self.adjacencyMatrix[i][j] == 1:
+                        if self.minimumSpanningTree[i][j] == 1:
+                            txt = canvas.create_text((positions[i][0] + positions[j][0])/2,
+                                                     (positions[i][1] + positions[j][1])/2,
+                                                     text=self.weights[(i+1, j+1)], font=("Comic Sans", int(3*r/6), "bold"))
+                            rect = canvas.create_rectangle(canvas.bbox(txt), fill="lime")
+                            canvas.tag_lower(rect, txt)
+                        else:
+                            txt=canvas.create_text((positions[i][0] + positions[j][0])/2,
+                                               (positions[i][1] + positions[j][1])/2,
+                                               text=self.weights[(i+1, j+1)], font=("Comic Sans", int(3*r/6), "bold"))
+                            rect = canvas.create_rectangle(canvas.bbox(txt), fill="white", outline="black")
+                            canvas.tag_lower(rect, txt)
+            #draw vertices and numbers
+            for i in range(n):
+                if (i+1) in self.longest_comp:
+                    canvas.create_oval(positions[i][0]-r, positions[i][1]-r,
+                                    positions[i][0]+r, positions[i][1]+r,
+                                    fill="red", outline="black", width=3)
+                else:
+                    canvas.create_oval(positions[i][0]-r, positions[i][1]-r,
+                                    positions[i][0]+r, positions[i][1]+r,
+                                    fill="lime", outline="black", width=3)
+                canvas.create_text(positions[i][0],
+                                positions[i][1],
+                                text=i+1, font=("Comic Sans", int(3*r/4), "bold"), anchor=tk.CENTER)
+
+            canvas.pack()
+            window.mainloop()
