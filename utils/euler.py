@@ -55,4 +55,3 @@ if __name__ == '__main__':
     res = get_euler_cycle(test)
     pretty_cycle_print(res)
     G.draw()
-
