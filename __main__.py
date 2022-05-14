@@ -4,14 +4,33 @@ from utils.generators import generate_eulerian
 from utils.regular_graph_randomization import *
 from utils.euler import get_euler_cycle, pretty_cycle_print
 from Graph import Graph
+from utils.dijkstra import *
+from utils.generators import *
+
+def print_array(arr):
+    """
+    prints a 2-D numpy array in a nicer format
+    """
+    for a in arr:
+        for elem in a:
+            print(f"{elem:<2.0f}".rjust(3), end="")
+        print(end="\n")
+
 
 
 if __name__ == '__main__':
-    g1 = Graph("txt_files/z1_am.txt", "a_m")
+    g1 = Graph("z1_am.txt", "a_m")
     # g1.print_all_representations()
-    # print(g1.weights)
-    # g1.draw_with_weights()
-    g1.prim_mst()
+    print(g1.weights)
+    print(g1.weightsOfEdges)
+    distance_matrix, previous_matrix = dijkstra_algorithm(g1.adjacencyMatrixWeights)
+    print_array(g1.adjacencyMatrixWeights)
+    print_dijkstra_algorithm_result(distance_matrix, previous_matrix)
+
+    print_array(g1.distanceMatrix)
+
+    g1.draw_with_weights()
+    # g1.prim_mst()
     # g1.components()
     #print_graphical([4,2,2,3,2,1,4,2,2,2,2])
 
