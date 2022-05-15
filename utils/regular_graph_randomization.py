@@ -2,6 +2,7 @@ import random
 from utils.degree_sequence import *
 from Graph import Graph
 
+
 def swap(x1, x2, y1, y2, adjacency_list):
     adjacency_list[x1].append(y1)
     adjacency_list[y1].append(x1)
@@ -56,8 +57,7 @@ def generate_k_regular_graph(vertices_number, k):
     :return: Regular Graph
     """
 
-
-    if (vertices_number >= k + 1 and vertices_number * k % 2 == 0):
+    if vertices_number >= k + 1 and vertices_number * k % 2 == 0:
         degree_sequence = [k] * vertices_number
         adj_list = randomize_graph(degree_sequence, 10)
         return Graph(adj_list, 'a_l')

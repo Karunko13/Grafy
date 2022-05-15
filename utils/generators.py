@@ -78,4 +78,3 @@ def generate_eulerian(vertices: int):  # -> Graph:
         # adj_list = graphical_to_graph(degree_seq)
         # return Graph(adj_list, 'a_l')
         return graphical_to_graph(degree_seq)
-

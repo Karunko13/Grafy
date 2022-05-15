@@ -1,6 +1,7 @@
 import numpy as np
 from collections import defaultdict
 
+
 def adj_matrix_to_adj_list(adj_m):
     adj_l = defaultdict(list)
     for index, x in np.ndenumerate(adj_m):
@@ -56,6 +57,7 @@ def adj_matrix_to_inc_matrix(adj_m):
 # ]))
 # print('---------------------------------------------------')
 
+
 def adj_list_to_adj_matrix(adj_l):
     n = len(adj_l)
     adj_m = np.zeros((n, n), dtype=int)
@@ -99,6 +101,7 @@ def inc_matrix_to_adj_matrix(inc_matrix):
 # [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1]
 # ]))
 
+
 def adj_list_to_inc_matrix(adj_l):
     adj_m = adj_list_to_adj_matrix(adj_l)
     return adj_matrix_to_inc_matrix(adj_m)
@@ -108,6 +111,7 @@ def adj_list_to_inc_matrix(adj_l):
 # print(adj_list_to_inc_matrix({1: [2, 5, 6], 2: [1, 3, 6], 3: [2, 4, 5, 12], 4: [3, 8, 9, 11], 5: [1, 3, 7, 9], 6: [1, 2, 7], 7: [5, 6, 8], 8: [4, 7, 9, 12], 9: [4, 5, 8, 10], 10: [9], 11: [4], 12: [3, 8]}))
 #
 # print('---------------------------------------------------')
+
 
 def inc_matrix_to_adj_list(inc_m):
     adj_m = inc_matrix_to_adj_matrix(inc_m)

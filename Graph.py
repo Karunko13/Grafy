@@ -1,7 +1,7 @@
 from utils.conversions import *
 import tkinter as tk
 import math
-import random
+import copy
 
 
 class Graph:
@@ -9,11 +9,6 @@ class Graph:
     adjacencyList = None  # lista sasiedztwa
     incidenceMatrix = None  # macierz incydencji
     longest_comp = None  # najdłuższa spójna składowa
-    weights = None  # wagi krawędzi
-    minimumSpanningTree = None  # minimalne drzewo rozpinające jako adj_matrix
-    adjacencyMatrixWeights = None #macierz sasiedztwa z wagami zamiast 1
-    distanceMatrix = None #macierz odleglosci
-
 
     def __init__(self, file_path=None, graph_representation="a_m"):
         if type(file_path) is str:
@@ -66,7 +61,7 @@ class Graph:
         print(self.incidenceMatrix)
         print(" ")
 
-    def draw(self, title= "okno"):
+    def draw(self, title="okno"):
         if self.adjacencyMatrix is None:
             print("Graf pusty - nie można narysować.")
             return
@@ -142,7 +137,7 @@ class Graph:
 
         for i in range(0, max(comps_representation.keys())):
             temp = len(comps_representation.get(i + 1))
-            if (temp > max_number_length):
+            if temp > max_number_length:
                 max_number_length = temp
                 max_number = i + 1
         longest_vert = comps_representation.get(max_number)
@@ -153,6 +148,49 @@ class Graph:
             if comps[temp - 1] == -1:
                 comps[temp - 1] = nr
                 self.components_recursive(nr, temp, graph, comps)
+
+    def get_euler_cycle(self) -> list:
+        def is_bridge(a_l: dict) -> bool:
+            start = list(a_l)[0]
+            visited = {}
+            for vert in a_l:
+                visited[vert] = -1
+            visited[start] = 0
+            S = [start]
+            while len(S):
+                b = S.pop()
+                for a in a_l[b]:
+                    if a in visited and visited[a] == -1:
+                        visited[a] = 0
+                        S.append(a)
+                    visited[b] = 1
+            return list(visited.values()).count(1) != len(a_l)
+
+        graph_copy = copy.deepcopy(self.adjacencyList)
+        euler_cycle = []
+        u = list(graph_copy.keys())[0]
+        bridge = False
+        while len(graph_copy):
+            current_vertex = u
+            for u in list(graph_copy[current_vertex]):
+                graph_copy[u].remove(current_vertex)
+                graph_copy[current_vertex].remove(u)
+                bridge = is_bridge(graph_copy)
+                if bridge:
+                    graph_copy[u].append(current_vertex)
+                    graph_copy[current_vertex].append(u)
+                else:
+                    break
+            if bridge:
+                if current_vertex in graph_copy[u]:
+                    graph_copy[u].remove(current_vertex)
+                if u in graph_copy[current_vertex]:
+                    graph_copy[current_vertex].remove(u)
+                graph_copy.pop(current_vertex)
+            if current_vertex != u:
+                euler_cycle.append((current_vertex, u))
+        print('\nCykl Eulera:\n[', ''.join('{} - '.format(val[0]) for val in euler_cycle) + f'{euler_cycle[0][0]}' + ']\n')
+        return euler_cycle
 
     def check_hamilton(self):
 
@@ -187,16 +225,3 @@ class Graph:
                 self.hamilton_recursive(list, number_of_nodes, node, visited_nodes, path)
                 visited_nodes[node - 1] = -1
                 path.pop()
-
-    def weights_of_edges(self):
-        pair_list = []
-        weights = []
-
-        for i in range(0, len(self.adjacencyMatrix)):
-            for j in range(0, i):
-                if (self.adjacencyMatrix[i][j] == 1):
-                    pair_list.append((i + 1, j + 1))
-                    weights.append(random.randint(1, 10))
-        self.weightsOfEdges = weights
-
-        return defaultdict(list, dict(zip(pair_list, weights)))
