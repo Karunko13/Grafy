@@ -127,3 +127,16 @@ def inc_matrix_to_adj_list(inc_m):
 # [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0],
 # [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1]
 # ]))
+
+
+def digraph_inc_m_from_adj_m(adj_m):
+    col_num = np.count_nonzero(adj_m == 1)
+    inc_m = np.zeros((adj_m.shape[1], col_num), dtype=int)
+    edge = 0
+    for i in range(0, adj_m.shape[1]):
+        for j in range(0, adj_m.shape[0]):
+            if adj_m[i][j]:
+                inc_m[i][edge] = -1
+                inc_m[j][edge] = 1
+                edge += 1
+    return inc_m

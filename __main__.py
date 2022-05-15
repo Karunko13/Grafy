@@ -71,10 +71,11 @@ def zestaw2():
 
 def zestaw4():
     # ZESTAW 4
-    print("\nZESTAW 2\n")
+    print("\nZESTAW 4\n")
     # zad1
     print("\nzad1\n")
-    g1 = Graph(generate_digraph(12, 0.3), "a_m")
+    g1 = generate_digraph(6, 0.3)
+    g1.print_all_representations()
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 from random import randrange
+from Graph import Graph
 import numpy as np
 from utils.degree_sequence import graphical_to_graph, is_graphical
 
@@ -80,7 +81,7 @@ def generate_eulerian(vertices: int):  # -> Graph:
         return graphical_to_graph(degree_seq)
 
 
-def generate_digraph(vertices: int, probability: float, filename='') -> np.ndarray:
+def generate_digraph(vertices: int, probability: float, filename='') -> Graph:
     msg = ''
     if vertices < 1:
         msg += 'Number of vertices must be higher than 0.\n'
@@ -93,4 +94,6 @@ def generate_digraph(vertices: int, probability: float, filename='') -> np.ndarr
         np.fill_diagonal(a, 0)
         if filename != '':
             np.savetxt(filename, a, delimiter=' ', fmt='%d')
-        return a
+        graph = Graph()
+        graph.digraph_from_a_m(a)
+        return graph

@@ -1,3 +1,5 @@
+import numpy as np
+
 from utils.conversions import *
 import tkinter as tk
 import math
@@ -30,30 +32,31 @@ class Graph:
         else:
             data = file_path
 
-        if graph_representation == "a_m":
-            self.adjacencyMatrix = np.copy(data)
-            self.adjacencyMatrixWeights = np.copy(data)
-            self.adjacencyList = adj_matrix_to_adj_list(self.adjacencyMatrix)
-            self.incidenceMatrix = adj_matrix_to_inc_matrix(self.adjacencyMatrix)
-        elif graph_representation == "i_m":
-            self.incidenceMatrix = np.copy(data)
-            self.adjacencyMatrix = inc_matrix_to_adj_matrix(self.incidenceMatrix)
-            self.adjacencyList = inc_matrix_to_adj_list(self.incidenceMatrix)
-        else:
-            if type(file_path) is str:
-                key_values = list(range(1, len(data) + 1))
-                list_of_dict = defaultdict(list, dict(zip(key_values, data)))
-
-                self.adjacencyList = list_of_dict
-                self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
-                self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
-
+        if file_path is not None:
+            if graph_representation == "a_m":
+                self.adjacencyMatrix = np.copy(data)
+                self.adjacencyMatrixWeights = np.copy(data)
+                self.adjacencyList = adj_matrix_to_adj_list(self.adjacencyMatrix)
+                self.incidenceMatrix = adj_matrix_to_inc_matrix(self.adjacencyMatrix)
+            elif graph_representation == "i_m":
+                self.incidenceMatrix = np.copy(data)
+                self.adjacencyMatrix = inc_matrix_to_adj_matrix(self.incidenceMatrix)
+                self.adjacencyList = inc_matrix_to_adj_list(self.incidenceMatrix)
             else:
-                self.adjacencyList = data
-                self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
-                self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+                if type(file_path) is str:
+                    key_values = list(range(1, len(data) + 1))
+                    list_of_dict = defaultdict(list, dict(zip(key_values, data)))
 
-        self.longest_comp = self.components()
+                    self.adjacencyList = list_of_dict
+                    self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
+                    self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+
+                else:
+                    self.adjacencyList = data
+                    self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
+                    self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+
+            self.longest_comp = self.components()
 
        # self.weights = self.weights_of_edges()
        #self.init_weigth_matrix()
@@ -395,3 +398,8 @@ class Graph:
 
             canvas.pack()
             window.mainloop()
+
+    def digraph_from_a_m(self, a_m):
+        self.adjacencyMatrix = a_m
+        self.adjacencyList = adj_matrix_to_adj_list(a_m)
+        self.incidenceMatrix = digraph_inc_m_from_adj_m(self.adjacencyMatrix)
