@@ -5,7 +5,7 @@ import tkinter as tk
 import math
 import random
 from utils.dijkstra import *
-
+from utils.dfs import *
 
 class Graph:
     adjacencyMatrix = None  # macierz sasiedztwa
@@ -403,3 +403,25 @@ class Graph:
         self.adjacencyMatrix = a_m
         self.adjacencyList = adj_matrix_to_adj_list(a_m)
         self.incidenceMatrix = digraph_inc_m_from_adj_m(self.adjacencyMatrix)
+
+    def kosaraju(self):
+        d = {k: -1 for k, v in self.adjacencyList.items()}
+        f = {k: -1 for k, v in self.adjacencyList.items()}
+        t = 0
+        for k, v in self.adjacencyList.items():
+            if d[k] == -1:
+                t = dfs_visit(k, self, d, f, t)
+        adj_list_T = defaultdict(list)
+        for k, v in self.adjacencyList.items():
+            for e in v:
+                adj_list_T[e].append(k)
+        graph_T = Graph(adj_list_T, 'a_l')
+        nr = 0
+        comp = {k: -1 for k, v in graph_T.adjacencyList.items()}
+        for k, v in sorted(graph_T.adjacencyList.items(), key=lambda x: x[1], reverse=True):
+            if comp[k] == -1:
+                nr += 1
+                comp[k] = nr
+                components_r(nr, k, graph_T, comp)
+        return comp
+    

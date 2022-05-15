@@ -76,6 +76,19 @@ def zestaw4():
     print("\nzad1\n")
     g1 = generate_digraph(6, 0.3)
     g1.print_all_representations()
+    print("\nzad2\n")
+    g2 = Graph(
+        [
+        [0, 1, 1, 0, 1, 0, 0],
+        [1, 0, 1, 1, 1, 0, 1],
+        [0, 0, 0, 0, 0, 1, 0],
+        [0, 1, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 1],
+        [0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0]
+    ], 'a_m'
+    )
+    print(g2.kosaraju())
 
 
 if __name__ == '__main__':
