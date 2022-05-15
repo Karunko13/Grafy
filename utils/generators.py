@@ -79,3 +79,18 @@ def generate_eulerian(vertices: int):  # -> Graph:
         # return Graph(adj_list, 'a_l')
         return graphical_to_graph(degree_seq)
 
+
+def generate_digraph(vertices: int, probability: float, filename='') -> np.ndarray:
+    msg = ''
+    if vertices < 1:
+        msg += 'Number of vertices must be higher than 0.\n'
+    if 0 > probability or probability > 1:
+        msg += 'Probability must be in <0, 1> range.\n'
+    if msg != '':
+        raise ValueError(msg)
+    else:
+        a = np.random.choice(2, size=[vertices, vertices], p=[1.0 - probability, probability])
+        np.fill_diagonal(a, 0)
+        if filename != '':
+            np.savetxt(filename, a, delimiter=' ', fmt='%d')
+        return a

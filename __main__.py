@@ -67,11 +67,19 @@ def zestaw2():
     lewis_hamilton = Graph("txt_files/z2_ham.txt", "a_m")
     lewis_hamilton.check_hamilton()
     lewis_hamilton.draw("zestaw2/zad6")
-    
-    
+
+
+def zestaw4():
+    # ZESTAW 4
+    print("\nZESTAW 2\n")
+    # zad1
+    print("\nzad1\n")
+    g1 = Graph(generate_digraph(12, 0.3), "a_m")
+
+
 if __name__ == '__main__':
     
     os.system('cls')
-    zestaw1()
-    zestaw2()
-    
+    # zestaw1()
+    # zestaw2()
+    zestaw4()
