@@ -79,8 +79,3 @@ def generate_eulerian(vertices: int):  # -> Graph:
         # return Graph(adj_list, 'a_l')
         return graphical_to_graph(degree_seq)
 
-
-if __name__ == '__main__':
-    # print(generate_n_l(6, 1, 'test2.txt'))
-    # print(generate_n_p(9, 0.5, 'test.txt'))
-    generate_eulerian(8)

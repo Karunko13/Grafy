@@ -44,13 +44,9 @@ def graphical_to_graph(A):
     else:
         raise ValueError('not graphical')
 
-def print_graphical(A):
+def print_graphical(A, title="okno"):
     try:
-        a = Graph(graphical_to_graph(A), 'a_l', False)
-        a.draw()
+        a = Graph(graphical_to_graph(A), 'a_l')
+        a.draw(title)
     except ValueError as e:
         print(e.args)
-
-# if __name__ == '__main__':
-#     print_graphical([4,2,2,3,2,1,4,2,2,2,2])
-#     print_graphical([4,4,3,1,2])

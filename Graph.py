@@ -24,9 +24,9 @@ class Graph:
                 with open(file_path, 'r') as f:
                     data = [[int(val) for val in line.split(' ')] if line != '\n' else [] for line in f]
 
-            print("Graph represented by " + ("adjacency matrix." if graph_representation == "a_m"
+            print("Graf reprezentowany jako: " + ("macierz sąsiedztwa." if graph_representation == "a_m"
                                              else (
-                "incidence matrix." if graph_representation == "i_m" else "adjacency list.")))
+                "macierz incydencji." if graph_representation == "i_m" else "lista sąsiedztwa.")))
         else:
             data = file_path
 
@@ -55,19 +55,23 @@ class Graph:
 
         self.longest_comp = self.components()
 
-        self.weights = self.weights_of_edges()
-        self.init_weigth_matrix()
-        self.distanceMatrix = self.generate_distance_matrix()
+       # self.weights = self.weights_of_edges()
+       #self.init_weigth_matrix()
+       # self.distanceMatrix = self.generate_distance_matrix()
 
     def __str__(self):
         return str(self.print_all_representations())
 
     def print_all_representations(self):
+        print("\nLista sąsiedztwa: \n")
         print(self.adjacencyList)
+        print("\nMacierz sąsiedztwa: \n")
         print(self.adjacencyMatrix)
+        print("\nMacierz incydencji: \n")
         print(self.incidenceMatrix)
+        print(" ")
 
-    def draw(self):
+    def draw(self, title= "okno"):
         if self.adjacencyMatrix is None:
             print("Empty graph - cannot draw the graph.")
             return
@@ -84,6 +88,7 @@ class Graph:
             r = R / n * 0.5
 
         window = tk.Tk()
+        window.winfo_toplevel().title(title)
         window.geometry("800x800")
         canvas = tk.Canvas(window, height=height, width=width, bg="white")
 

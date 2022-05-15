@@ -2,9 +2,6 @@ import random
 from utils.degree_sequence import *
 from Graph import Graph
 
-
-
-
 def swap(x1, x2, y1, y2, adjacency_list):
     adjacency_list[x1].append(y1)
     adjacency_list[y1].append(x1)
