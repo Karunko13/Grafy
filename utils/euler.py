@@ -46,4 +46,4 @@ def get_euler_cycle(graph: dict) -> list:
 
 
 def pretty_cycle_print(cycle: list):
-    print('\nEuler Cycle:\n[', ''.join('{} - '.format(val[0]) for val in cycle) + f'{cycle[0][0]}' + ' ]\n')
+    print('\nCykl Eulera:\n[', ''.join('{} - '.format(val[0]) for val in cycle) + f'{cycle[0][0]}' + ' ]\n')

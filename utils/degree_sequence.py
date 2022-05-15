@@ -18,12 +18,6 @@ def is_graphical(A):
         A.sort(reverse=True)
 
 
-# print (is_graphical([4,2,2,3,2,1,4,2,2,2,2]))
-# print (is_graphical([4,4,3,1,2]))
-# print (is_graphical([6,5,4,4,3,3,2]))
-# print (is_graphical([3,3,2,2,2]))
-# print (is_graphical([0]))
-
 def graphical_to_graph(A):
     if is_graphical(A.copy()):
         A.sort(reverse=True)

@@ -5,7 +5,6 @@ from utils.generators import generate_eulerian
 from utils.regular_graph_randomization import *
 from utils.degree_sequence import *
 from utils.euler import get_euler_cycle, pretty_cycle_print
-from utils.dijkstra import *
 from utils.generators import *
 
 
