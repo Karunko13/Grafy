@@ -77,8 +77,8 @@ def zestaw4():
     g1 = generate_digraph(6, 0.3)
     g1.print_all_representations()
     print("\nzad2\n")
-    g2 = Graph(
-        [
+    g2 = Graph()
+    am = np.copy([
         [0, 1, 1, 0, 1, 0, 0],
         [1, 0, 1, 1, 1, 0, 1],
         [0, 0, 0, 0, 0, 1, 0],
@@ -86,9 +86,15 @@ def zestaw4():
         [0, 0, 0, 0, 0, 0, 1],
         [0, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0]
-    ], 'a_m'
-    )
+    ])
+    g2.digraph_from_a_m(am)
     print(g2.kosaraju())
+
+    g2.distance_matrix()
+
+    
+
+
 
 
 if __name__ == '__main__':

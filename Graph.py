@@ -17,8 +17,7 @@ class Graph:
     adjacencyMatrixWeights = None #macierz sasiedztwa z wagami zamiast 1
     distanceMatrix = None #macierz odleglosci
 
-
-    def __init__(self, file_path=None, graph_representation="a_m"):
+    def __init__(self, file_path=None, graph_representation="a_m", weight_min= 1, weight_max = 10):
         if type(file_path) is str:
             if file_path is None:
                 data = [[None]]
@@ -35,13 +34,14 @@ class Graph:
         if file_path is not None:
             if graph_representation == "a_m":
                 self.adjacencyMatrix = np.copy(data)
-                self.adjacencyMatrixWeights = np.copy(data)
+                self.adjacencyMatrixWeights = self.adjacencyMatrix.copy()
                 self.adjacencyList = adj_matrix_to_adj_list(self.adjacencyMatrix)
                 self.incidenceMatrix = adj_matrix_to_inc_matrix(self.adjacencyMatrix)
             elif graph_representation == "i_m":
                 self.incidenceMatrix = np.copy(data)
                 self.adjacencyMatrix = inc_matrix_to_adj_matrix(self.incidenceMatrix)
                 self.adjacencyList = inc_matrix_to_adj_list(self.incidenceMatrix)
+                self.adjacencyMatrixWeights = self.adjacencyMatrix.copy()
             else:
                 if type(file_path) is str:
                     key_values = list(range(1, len(data) + 1))
@@ -50,17 +50,19 @@ class Graph:
                     self.adjacencyList = list_of_dict
                     self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
                     self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+                    self.adjacencyMatrixWeights = self.adjacencyMatrix.copy()
 
                 else:
                     self.adjacencyList = data
                     self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
                     self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+                    self.adjacencyMatrixWeights = self.adjacencyMatrix.copy()
 
             self.longest_comp = self.components()
-
-       # self.weights = self.weights_of_edges()
-       #self.init_weigth_matrix()
-       # self.distanceMatrix = self.generate_distance_matrix()
+        if self.adjacencyList is not None:
+            self.weights = self.weights_of_edges(weight_min, weight_max)
+            self.init_weigth_matrix()
+            self.distanceMatrix = self.generate_distance_matrix()
 
     def __str__(self):
         return str(self.print_all_representations())
@@ -262,15 +264,29 @@ class Graph:
                 visited_nodes[node - 1] = -1
                 path.pop()
 
-    def weights_of_edges(self):
+    def weights_of_edges(self, weight_min=1, weight_max=10):
         pair_list = []
         weights = []
-
         for i in range(0, len(self.adjacencyMatrix)):
             for j in range(0, i):
                 if (self.adjacencyMatrix[i][j] == 1):
                     pair_list.append((i + 1, j + 1))
-                    weights.append(random.randint(1, 10))
+                    weights.append(random.randint(weight_min, weight_max))
+        self.weightsOfEdges = weights
+
+        return defaultdict(list, dict(zip(pair_list, weights)))
+    
+    def weights_of_edges_digraph(self, weight_min=1, weight_max=10):
+        pair_list = []
+        weights = []
+        for i in range(0, len(self.adjacencyMatrix)):
+            for j in range(0, len(self.adjacencyMatrix)):
+                if (self.adjacencyMatrix[i][j] == 1):
+                    pair_list.append((i + 1, j + 1))
+                    r=0
+                    while(r==0):
+                        r = random.randint(weight_min, weight_max)
+                    weights.append(r)
         self.weightsOfEdges = weights
 
         return defaultdict(list, dict(zip(pair_list, weights)))
@@ -283,6 +299,15 @@ class Graph:
                 if (self.adjacencyMatrixWeights[i][j] == 1):
                     self.adjacencyMatrixWeights[i][j] = self.weightsOfEdges[index]
                     self.adjacencyMatrixWeights[j][i] = self.adjacencyMatrixWeights[i][j]
+                    index += 1
+
+    def init_weigth_matrix_digraph(self):
+        index = 0
+
+        for i in range(0, len(self.adjacencyMatrixWeights)):
+            for j in range(0, len(self.adjacencyMatrix)):
+                if (self.adjacencyMatrixWeights[i][j] == 1):
+                    self.adjacencyMatrixWeights[i][j] = self.weightsOfEdges[index]
                     index += 1
 
     def generate_distance_matrix(self):
@@ -401,8 +426,11 @@ class Graph:
 
     def digraph_from_a_m(self, a_m):
         self.adjacencyMatrix = a_m
+        self.adjacencyMatrixWeights = a_m.copy()
         self.adjacencyList = adj_matrix_to_adj_list(a_m)
         self.incidenceMatrix = digraph_inc_m_from_adj_m(self.adjacencyMatrix)
+        self.weights = self.weights_of_edges_digraph(-5, 10)
+        self.init_weigth_matrix_digraph()
 
     def kosaraju(self):
         d = {k: -1 for k, v in self.adjacencyList.items()}
@@ -424,4 +452,39 @@ class Graph:
                 comp[k] = nr
                 components_r(nr, k, graph_T, comp)
         return comp
+      
+
+    def distance_matrix(self):
+        adj_m = self.adjacencyMatrixWeights.copy()
+        n=len(adj_m)
+        matrix = np.zeros((n, n))
+
+        for s in range(n):
+            row = bellman_ford(adj_m, s)
+            if row is None:
+                print("Cykl z ujemną sumą wag")
+                return None
+            matrix[s]=row
+        
+        print("Macierz odległości:")
+        print(matrix)
+
+def bellman_ford(adj_m, s=0):
+    n = len(adj_m)
+    row = np.full(n, np.inf)
+    row[s] = 0
+
+    for _ in range(n-1):
+        for u in range(0, n):
+            for v in range(0, n):
+                w = adj_m[u][v]
+                if (row[v] > (row[u] + w)) and w!=0:
+                    row[v] = (row[u] + w)
     
+    for u in range(0, n):
+        for v in range(0, n):
+            w = adj_m[u][v]
+            if (row[v] > row[u] + w) and w != 0:
+                return None
+    return row
+
