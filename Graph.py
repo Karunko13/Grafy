@@ -7,6 +7,7 @@ import random
 from utils.dijkstra import *
 from utils.dfs import *
 
+
 class Graph:
     adjacencyMatrix = None  # macierz sasiedztwa
     adjacencyList = None  # lista sasiedztwa
@@ -14,20 +15,21 @@ class Graph:
     longest_comp = None  # najdłuższa spójna składowa
     weights = None  # wagi krawędzi
     minimumSpanningTree = None  # minimalne drzewo rozpinające jako adj_matrix
-    adjacencyMatrixWeights = None #macierz sasiedztwa z wagami zamiast 1
-    distanceMatrix = None #macierz odleglosci
+    adjacencyMatrixWeights = None  # macierz sasiedztwa z wagami zamiast 1
+    distanceMatrix = None  # macierz odleglosci
 
-    def __init__(self, file_path=None, graph_representation="a_m", weight_min= 1, weight_max = 10):
+    def __init__(self, file_path=None, graph_representation="a_m", weight_min=1, weight_max=10):
         if type(file_path) is str:
             if file_path is None:
                 data = [[None]]
             else:
                 with open(file_path, 'r') as f:
-                    data = [[int(val) for val in line.split(' ')] if line != '\n' else [] for line in f]
+                    data = [[int(val) for val in line.split(' ')]
+                            if line != '\n' else [] for line in f]
 
             print("Graf reprezentowany jako: " + ("macierz sąsiedztwa." if graph_representation == "a_m"
-                                             else (
-                "macierz incydencji." if graph_representation == "i_m" else "lista sąsiedztwa.")))
+                                                  else (
+                                                      "macierz incydencji." if graph_representation == "i_m" else "lista sąsiedztwa.")))
         else:
             data = file_path
 
@@ -35,27 +37,36 @@ class Graph:
             if graph_representation == "a_m":
                 self.adjacencyMatrix = np.copy(data)
                 self.adjacencyMatrixWeights = self.adjacencyMatrix.copy()
-                self.adjacencyList = adj_matrix_to_adj_list(self.adjacencyMatrix)
-                self.incidenceMatrix = adj_matrix_to_inc_matrix(self.adjacencyMatrix)
+                self.adjacencyList = adj_matrix_to_adj_list(
+                    self.adjacencyMatrix)
+                self.incidenceMatrix = adj_matrix_to_inc_matrix(
+                    self.adjacencyMatrix)
             elif graph_representation == "i_m":
                 self.incidenceMatrix = np.copy(data)
-                self.adjacencyMatrix = inc_matrix_to_adj_matrix(self.incidenceMatrix)
-                self.adjacencyList = inc_matrix_to_adj_list(self.incidenceMatrix)
+                self.adjacencyMatrix = inc_matrix_to_adj_matrix(
+                    self.incidenceMatrix)
+                self.adjacencyList = inc_matrix_to_adj_list(
+                    self.incidenceMatrix)
                 self.adjacencyMatrixWeights = self.adjacencyMatrix.copy()
             else:
                 if type(file_path) is str:
                     key_values = list(range(1, len(data) + 1))
-                    list_of_dict = defaultdict(list, dict(zip(key_values, data)))
+                    list_of_dict = defaultdict(
+                        list, dict(zip(key_values, data)))
 
                     self.adjacencyList = list_of_dict
-                    self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
-                    self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+                    self.adjacencyMatrix = adj_list_to_adj_matrix(
+                        self.adjacencyList)
+                    self.incidenceMatrix = adj_list_to_inc_matrix(
+                        self.adjacencyList)
                     self.adjacencyMatrixWeights = self.adjacencyMatrix.copy()
 
                 else:
                     self.adjacencyList = data
-                    self.adjacencyMatrix = adj_list_to_adj_matrix(self.adjacencyList)
-                    self.incidenceMatrix = adj_list_to_inc_matrix(self.adjacencyList)
+                    self.adjacencyMatrix = adj_list_to_adj_matrix(
+                        self.adjacencyList)
+                    self.incidenceMatrix = adj_list_to_inc_matrix(
+                        self.adjacencyList)
                     self.adjacencyMatrixWeights = self.adjacencyMatrix.copy()
 
             self.longest_comp = self.components()
@@ -76,7 +87,7 @@ class Graph:
         print(self.incidenceMatrix)
         print(" ")
 
-    def draw(self, title= "okno"):
+    def draw(self, title="okno"):
         if self.adjacencyMatrix is None:
             print("Empty graph - cannot draw the graph.")
             return
@@ -107,7 +118,8 @@ class Graph:
             else:
                 positions[i][0] = center_x
                 positions[i][1] = center_y
-        canvas.create_oval(center_x - R, center_y - R, center_x + R, center_y + R, outline="blue", width=3, dash=(5, 1))
+        canvas.create_oval(center_x - R, center_y - R, center_x + R,
+                           center_y + R, outline="blue", width=3, dash=(5, 1))
         # draw edges
         for i in range(1, n):
             for j in range(0, i):
@@ -174,7 +186,8 @@ class Graph:
             for j in range(0, i):
                 if self.adjacencyMatrix[i][j] == 1:
                     txt = canvas.create_text((positions[i][0] + positions[j][0]) / 2,
-                                             (positions[i][1] + positions[j][1]) / 2,
+                                             (positions[i][1] +
+                                              positions[j][1]) / 2,
                                              text=self.weights[(i + 1, j + 1)],
                                              font=("Comic Sans", int(3 * r / 6), "bold"))
                     rect = canvas.create_rectangle(
@@ -238,7 +251,8 @@ class Graph:
         visited_nodes = [-1] * number_of_nodes
         visited_nodes[first_node - 1] = 1
 
-        self.hamilton_recursive(self.adjacencyList, number_of_nodes, first_node, visited_nodes, path)
+        self.hamilton_recursive(
+            self.adjacencyList, number_of_nodes, first_node, visited_nodes, path)
         try:
             hamilton_path
         except NameError:
@@ -260,7 +274,8 @@ class Graph:
                 visited_nodes[node - 1] = 1
                 path.append(node)
 
-                self.hamilton_recursive(list, number_of_nodes, node, visited_nodes, path)
+                self.hamilton_recursive(
+                    list, number_of_nodes, node, visited_nodes, path)
                 visited_nodes[node - 1] = -1
                 path.pop()
 
@@ -275,7 +290,7 @@ class Graph:
         self.weightsOfEdges = weights
 
         return defaultdict(list, dict(zip(pair_list, weights)))
-    
+
     def weights_of_edges_digraph(self, weight_min=1, weight_max=10):
         pair_list = []
         weights = []
@@ -283,8 +298,8 @@ class Graph:
             for j in range(0, len(self.adjacencyMatrix)):
                 if (self.adjacencyMatrix[i][j] == 1):
                     pair_list.append((i + 1, j + 1))
-                    r=0
-                    while(r==0):
+                    r = 0
+                    while(r == 0):
                         r = random.randint(weight_min, weight_max)
                     weights.append(r)
         self.weightsOfEdges = weights
@@ -320,13 +335,11 @@ class Graph:
         distance_matrix = np.zeros(shape=self.adjacencyMatrixWeights.shape)
         vertices_number, _ = self.adjacencyMatrixWeights.shape
         for vertex in range(vertices_number):
-            d_s, _ = dijkstra_algorithm(self.adjacencyMatrixWeights, vertex + 1)
+            d_s, _ = dijkstra_algorithm(
+                self.adjacencyMatrixWeights, vertex + 1)
             distance_matrix[vertex, :] = d_s
 
         return distance_matrix
-
-
-
 
     def prim_mst(self):
         A = defaultdict(list)
@@ -395,27 +408,35 @@ class Graph:
                     if self.adjacencyMatrix[i][j] == 1:
                         if self.minimumSpanningTree[i][j] == 1:
                             txt = canvas.create_text((positions[i][0] + positions[j][0]) / 2,
-                                                     (positions[i][1] + positions[j][1]) / 2,
-                                                     text=self.weights[(i + 1, j + 1)],
+                                                     (positions[i][1] +
+                                                      positions[j][1]) / 2,
+                                                     text=self.weights[(
+                                                         i + 1, j + 1)],
                                                      font=("Comic Sans", int(3 * r / 6), "bold"))
-                            rect = canvas.create_rectangle(canvas.bbox(txt), fill="lime")
+                            rect = canvas.create_rectangle(
+                                canvas.bbox(txt), fill="lime")
                             canvas.tag_lower(rect, txt)
                         else:
                             txt = canvas.create_text((positions[i][0] + positions[j][0]) / 2,
-                                                     (positions[i][1] + positions[j][1]) / 2,
-                                                     text=self.weights[(i + 1, j + 1)],
+                                                     (positions[i][1] +
+                                                      positions[j][1]) / 2,
+                                                     text=self.weights[(
+                                                         i + 1, j + 1)],
                                                      font=("Comic Sans", int(3 * r / 6), "bold"))
-                            rect = canvas.create_rectangle(canvas.bbox(txt), fill="white", outline="black")
+                            rect = canvas.create_rectangle(
+                                canvas.bbox(txt), fill="white", outline="black")
                             canvas.tag_lower(rect, txt)
             # draw vertices and numbers
             for i in range(n):
                 if (i + 1) in self.longest_comp:
                     canvas.create_oval(positions[i][0] - r, positions[i][1] - r,
-                                       positions[i][0] + r, positions[i][1] + r,
+                                       positions[i][0] +
+                                       r, positions[i][1] + r,
                                        fill="red", outline="black", width=3)
                 else:
                     canvas.create_oval(positions[i][0] - r, positions[i][1] - r,
-                                       positions[i][0] + r, positions[i][1] + r,
+                                       positions[i][0] +
+                                       r, positions[i][1] + r,
                                        fill="lime", outline="black", width=3)
                 canvas.create_text(positions[i][0],
                                    positions[i][1],
@@ -441,11 +462,17 @@ class Graph:
         for k, v in self.adjacencyList.items():
             if d[k] == -1:
                 t = dfs_visit(k, self, d, f, t)
-        adj_list_T = defaultdict(list)
-        for k, v in self.adjacencyList.items():
-            for e in v:
-                adj_list_T[e].append(k)
-        graph_T = Graph(adj_list_T, 'a_l')
+        # adj_list_T = defaultdict(list)
+        # for k, v in self.adjacencyList.items():
+        #     for e in v:
+        #         adj_list_T[e].append(k)
+        # graph_T = Graph(adj_list_T, 'a_l')
+        a_m_T = self.adjacencyMatrix[:]
+        for i in range(0, a_m_T.shape[1]):
+            for j in range(0, a_m_T.shape[0]):
+                a_m_T[i][j] = self.adjacencyMatrix[j][i]
+        graph_T = Graph()
+        graph_T.digraph_from_a_m(a_m_T)
         nr = 0
         comp = {k: -1 for k, v in graph_T.adjacencyList.items()}
         for k, v in sorted(graph_T.adjacencyList.items(), key=lambda x: x[1], reverse=True):
@@ -454,11 +481,10 @@ class Graph:
                 comp[k] = nr
                 components_r(nr, k, graph_T, comp)
         return comp
-      
 
     def distance_matrix(self):
         adj_m = self.adjacencyMatrixWeights.copy()
-        n=len(adj_m)
+        n = len(adj_m)
         matrix = np.zeros((n, n))
 
         for s in range(n):
@@ -466,10 +492,11 @@ class Graph:
             if row is None:
                 print("Cykl z ujemną sumą wag")
                 return None
-            matrix[s]=row
-        
+            matrix[s] = row
+
         print("Macierz odległości:")
         print(matrix)
+
 
 def bellman_ford(adj_m, s=0):
     n = len(adj_m)
@@ -480,13 +507,12 @@ def bellman_ford(adj_m, s=0):
         for u in range(0, n):
             for v in range(0, n):
                 w = adj_m[u][v]
-                if (row[v] > (row[u] + w)) and w!=0:
+                if (row[v] > (row[u] + w)) and w != 0:
                     row[v] = (row[u] + w)
-    
+
     for u in range(0, n):
         for v in range(0, n):
             w = adj_m[u][v]
             if (row[v] > row[u] + w) and w != 0:
                 return None
     return row
-
