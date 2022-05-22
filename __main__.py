@@ -120,10 +120,6 @@ def zestaw4():
     
     # zad3
     print("\nzad3\n")
-    b = False
-    while not b:
-        g2 = generate_digraph(6, 0.8)
-        b = len(list(set(list((g2.kosaraju()).values())))) == 1
     g2.print_all_representations()
     g2.distance_matrix()
     

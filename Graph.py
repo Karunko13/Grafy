@@ -433,6 +433,8 @@ class Graph:
         self.init_weigth_matrix_digraph()
 
     def kosaraju(self):
+        if (len(self.adjacencyList) != len(self.adjacencyMatrix)):
+            return None
         d = {k: -1 for k, v in self.adjacencyList.items()}
         f = {k: -1 for k, v in self.adjacencyList.items()}
         t = 0
