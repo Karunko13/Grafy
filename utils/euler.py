@@ -46,4 +46,12 @@ def get_euler_cycle(graph: dict) -> list:
 
 
 def pretty_cycle_print(cycle: list):
-    print('\nEuler Cycle:\n[', ''.join('{} - '.format(val[0]) for val in cycle) + f'{cycle[0][0]}' + ' ]\n')
+    print('\n\n\nEuler Cycle:\n[', ''.join('{} - '.format(val[0]) for val in cycle) + f'{cycle[0][0]}' + ' ]\n\n\n')
+
+
+if __name__ == '__main__':
+    test = generate_eulerian(7)
+    G = Graph(test, 'a_l')
+    res = get_euler_cycle(test)
+    pretty_cycle_print(res)
+    G.draw()

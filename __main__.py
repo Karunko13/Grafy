@@ -9,6 +9,7 @@ from utils.dijkstra import *
 from utils.generators import *
 from utils.centres import *
 
+
 def zestaw1():
     # ZESTAW 1
     print("\nZESTAW 1\n")
@@ -71,41 +72,43 @@ def zestaw2():
     lewis_hamilton.check_hamilton()
     lewis_hamilton.draw("zestaw2/zad6")
 
+
 def zestaw3():
-    #ZESTAW 3
+    # ZESTAW 3
     print("\nZESTAW 3\n")
-    #zad1
+    # zad1
     print("\nzad1\n")
-    g1=Graph(generate_n_l(7,12), "a_m")
+    g1 = Graph(generate_n_l(7, 12), "a_m")
     g1.draw_with_weights()
-    #zad2
+    # zad2
     print("\nzad2\n")
     distance_matrix, previous_matrix = dijkstra_algorithm(g1.adjacencyMatrixWeights, 2)
     print_dijkstra_algorithm_result(distance_matrix, previous_matrix)
-     
-    #zad3
+
+    # zad3
     print("\nzad3\n")
     print("\nMacierz odleglosci\n")
     print(g1.distanceMatrix)
-    
+
     # #zad4
     print("\nzad4\n")
     print(get_graph_centre(g1.distanceMatrix))
     print(get_graph_minmax_centre(g1.distanceMatrix))
-    
-    #zad5
+
+    # zad5
     print("\nzad5\n")
     g1.prim_mst()
-    
+
+
 def zestaw4():
     # ZESTAW 4
     print("\nZESTAW 4\n")
-    
-    #zad1
+
+    # zad1
     print("\nzad1")
     g1 = generate_digraph(6, 0.3)
     g1.print_all_representations()
-    
+
     # zad2
     print("\nzad2\n")
     # g2 = Graph()
@@ -124,23 +127,23 @@ def zestaw4():
     b = False
     while not b:
         g2 = generate_digraph(6, 0.1)
-        if(g2.kosaraju() is not None):
+        if (g2.kosaraju() is not None):
             b = len(list(set(list((g2.kosaraju()).values())))) == 1
     g2.digraph_from_a_m(am)
     print(g2.kosaraju())
-    
+
     # zad3
     print("\nzad3\n")
     g2.print_all_representations()
     g2.distance_matrix()
-    
-    #zad 4    
 
+    # zad 4
+
+    # g2.johnson()
 
 if __name__ == '__main__':
-
     os.system('cls')
     # zestaw1()
     # zestaw2()
-    # zestaw3()
-    zestaw4()
+    zestaw3()
+    # zestaw4()

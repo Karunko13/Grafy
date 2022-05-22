@@ -1,30 +1,23 @@
 import numpy as np
-from typing import List, Tuple
 
-def init(vertices_number, start_vertex):
+
+def init(vert_amount, start_node):
+    distance_matrix = np.full(vert_amount, np.Inf)
+    predecessors_matrix = np.full(vert_amount, np.nan)
+    distance_matrix[start_node] = 0
+    return distance_matrix, predecessors_matrix
+
+
+def find_vertex_with_min_d_s(S, distance_matrix):
     """
-    Set initial values of "distance" and "previous" array
-
+    Function returns number of node with shortest distance
+    :param S:
+    :param distance_matrix:
     """
-
-    d_s = np.full(vertices_number, np.Inf)
-    p_s = np.full(vertices_number, np.nan)
-    d_s[start_vertex] = 0
-    return d_s, p_s
-
-
-def relax(u, v, w, d_s, p_s):
-    if d_s[v] > d_s[u] + w:
-        d_s[v] = d_s[u] + w
-        p_s[v] = u
-
-
-def find_vertex_with_min_d_s(S, d_s):
-
 
     vertex_with_min_distance = 0
     min_weight = np.Inf
-    for index, weight in enumerate(d_s):
+    for index, weight in enumerate(distance_matrix):
         if index in S:
             continue
         if weight < min_weight:
@@ -33,60 +26,65 @@ def find_vertex_with_min_d_s(S, d_s):
     return vertex_with_min_distance
 
 
-def dijkstra_algorithm(start_matrix, start_vertex = 1):
-    """
-    Implementation of Dijkstra algorithm
+def dijkstra_algorithm(w, start_node=1):
     """
 
-    if np.any(start_matrix < 0):
-        raise ValueError("Dijkstra's algorithm does not support negative edge weights")
+    :param w: adj_matrix with weights
+    :param start_node: vertex for which we calculate paths
+    :return: array of distances and array of previous vertex
+    """
 
-    vertices_number, _ = start_matrix.shape
-    start_vertex -= 1
-    if start_vertex >= vertices_number or start_vertex < 0:
-        raise ValueError(f"Value of start vertex must be between 1 and {vertices_number}")
 
-    d_s, p_s = init(vertices_number, start_vertex)
+    if np.any(w < 0):
+        raise ValueError("Error - negatywne wagi krawedzi")
+
+    nodes, _ = w.shape
+    start_node = start_node - 1
+
+    if start_node >= nodes or start_node < 0:
+        raise ValueError(f"Wierzcholek startowy powinien byc pomiedzy 1 - {nodes}")
+
+    distance_array, predecessors_array = init(nodes, start_node)
     S = np.empty(0, dtype=np.int64)
-    while len(S) != vertices_number:
-        u = find_vertex_with_min_d_s(S, d_s)
+    while len(S) != nodes:
+        u = find_vertex_with_min_d_s(S, distance_array)
         S = np.sort(np.concatenate((S, np.array([u]))))
-        for v, w in enumerate(start_matrix[:, u]):
-            if v in S or w == 0:
+        for v, weight in enumerate(w[:, u]):
+            if v in S or weight == 0:
                 continue
-            relax(u, v, w, d_s, p_s)
-    return d_s, p_s
+            if distance_array[v] > distance_array[u] + weight:
+                distance_array[v] = distance_array[u] + weight
+                predecessors_array[v] = u
+
+    return distance_array, predecessors_array
 
 
-def generate_shortest_paths(p_s):
+def generate_shortest_paths(predecessors_array):
     """
-    Function generates path based on previous vertices stored in p_s
 
+    :param predecessors_array: array of previous nodes
+    :return:
     """
-    paths = [[] for _ in p_s]
-    finished_vertices = []
+    paths = [[] for _ in predecessors_array]
+    done_verts = []
 
-    while len(p_s) != len(finished_vertices):
-        for vertex, previous_vertex in enumerate(p_s):
-            if vertex in finished_vertices:
+    while len(predecessors_array) != len(done_verts):
+        for vertex, previous_vertex in enumerate(predecessors_array):
+            if vertex in done_verts:
                 continue
             elif np.isnan(previous_vertex):
                 paths[vertex].append(vertex + 1)
-                finished_vertices.append(vertex)
+                done_verts.append(vertex)
             elif len(paths[int(previous_vertex)]) != 0:
                 paths[vertex].extend([*paths[int(previous_vertex)], vertex + 1])
-                finished_vertices.append(vertex)
+                done_verts.append(vertex)
     return paths
 
 
-def print_dijkstra_algorithm_result(d_s, p_s):
-    """
-    Function for nice results printing of Dijkstra algorithm
+def print_dijkstra_algorithm_result(distance, previous_array):
+    start_vertex = np.isnan(previous_array).argmax()
+    paths = generate_shortest_paths(previous_array)
 
-    """
-    start_vertex = np.isnan(p_s).argmax()
-    paths = generate_shortest_paths(p_s)
-    print("Shortest paths from start vertex to others\n")
-    print(f"Start vertex: {start_vertex + 1}\n")
-    for vertex, (length, path) in enumerate(zip(d_s, paths)):
-        print(f'vertex: {vertex + 1:2.0f}; path length: {length:2.0f}; path: {path}')
+    print(f"Wierzcholek startowy: {start_vertex + 1}\n")
+    for vertex, (length, path) in enumerate(zip(distance, paths)):
+        print(f'd({vertex + 1:2.0f}) = {length:2.0f} ===> {path}')

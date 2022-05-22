@@ -330,7 +330,6 @@ class Graph:
         Generate matrix which contains distance between each pair of vertices in graph
         Function run Dijkstra algorithm for each vertex in graph
         Parameters
-
         """
         distance_matrix = np.zeros(shape=self.adjacencyMatrixWeights.shape)
         vertices_number, _ = self.adjacencyMatrixWeights.shape
@@ -497,6 +496,48 @@ class Graph:
         print("Macierz odległości:")
         print(matrix)
 
+    def johnson(self):
+            G = self.adjacencyMatrix.copy()
+            w = self.adjacencyMatrixWeights.copy()
+            nodes, _ = G.shape
+            G_p, weights = add_node(G, w)
+
+            # print(w)
+            # print()
+            # print("Macierz adj")
+            # print(G_p)
+            # print("Macierz wag")
+            # print(weights)
+
+            new_weights = np.zeros((nodes + 1, nodes + 1))
+            h = bellman_ford(weights, nodes)
+
+            if h is None:
+                print("Cykl z ujemna suma wag")
+                return None
+            # print(h)
+
+            for u in range(nodes + 1):
+                for v in range(nodes + 1):
+                    if (G_p[u][v] == 1):
+                        new_weights[u][v] = weights[u][v] + h[u] - h[v]
+
+
+            # print("Fixed macierz")
+            # print(new_weights)
+            # print()
+
+            D = np.zeros((nodes, nodes))
+            # D = [np.zeros(nodes) for v in range(nodes)]
+            # new_weights = np.round(new_weights)
+            for u in range(nodes):
+                d_u, _ = dijkstra_algorithm(new_weights, u + 1)
+                for v in range(nodes):
+                    D[u][v] = d_u[v] - h[u] + h[v]
+
+            print("Macierz odleglosci Johnson")
+            print(D.transpose())
+
 
 def bellman_ford(adj_m, s=0):
     n = len(adj_m)
@@ -516,3 +557,28 @@ def bellman_ford(adj_m, s=0):
             if (row[v] > row[u] + w) and w != 0:
                 return None
     return row
+
+
+def add_node(G, w):
+    """
+    :param G: adjacency_matrix of Graph
+    :param w: adjacencu matrix with weights
+    :return: adjacency matrix, adjacency matrix with weights with additional Node
+    """
+    nodes, _ = G.shape
+    weights = np.zeros((nodes + 1, nodes + 1))
+    G_p = np.zeros((nodes + 1, nodes + 1))
+
+    for i in range(nodes):
+        weights[i] = np.insert(w[i], nodes, 0)
+        G_p[i] = np.insert(G[i], nodes, 0)
+
+    s_distance_row = [0.001] * (nodes + 1)
+    s_distance_row[nodes] = 0
+    weights[nodes] = np.asarray(s_distance_row)
+
+    neighbour_nodes = [1] * (nodes + 1)
+    neighbour_nodes[nodes] = 0
+    G_p[nodes] = np.asarray(neighbour_nodes)
+
+    return G_p, weights
