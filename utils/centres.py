@@ -1,7 +1,5 @@
 import numpy as np
 from Graph import Graph
-import generators
-
 
 def get_graph_centre(distance_matrix: np.ndarray):
     if np.any(distance_matrix):
