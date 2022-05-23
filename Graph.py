@@ -341,14 +341,14 @@ class Graph:
 
         return distance_matrix
 
-    def prim_mst(self):
+    def kruskal_mst(self):
         A = defaultdict(list)
         sets = defaultdict(list)
         # MAKE-SET
         for k, v in self.adjacencyList.items():
             sets[k] = k
         # posortuj krawedzie niemalejaco wzgledem wag
-        weights = sorted(self.weights_of_edges().items(), key=lambda x: x[1])
+        weights = sorted(self.weights.items(), key=lambda x: x[1])
         for k, v in weights:
             tmp = (sets[k[0]] != sets[k[1]])
             if (tmp):
