@@ -97,7 +97,7 @@ def zestaw3():
 
     # zad5
     print("\nzad5\n")
-    g1.prim_mst()
+    g1.kruskal_mst()
 
 
 def zestaw4():
