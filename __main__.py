@@ -1,4 +1,5 @@
 from Graph import Graph
+from Flow_Network import *
 import os
 
 from utils.generators import generate_eulerian
@@ -142,5 +143,7 @@ if __name__ == '__main__':
     os.system('cls')
     # zestaw1()
     # zestaw2()
-    # zestaw3()
-    zestaw4()
+    #zestaw3()
+    # zestaw4()
+    f1=FlowNetwork(generate_am_for_flow_network(4))
+    print(f1.adjacencyMatrix_MaxFlow)
