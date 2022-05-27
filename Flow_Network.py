@@ -19,7 +19,67 @@ class FlowNetwork:
         self.layers_with_vertices = layers_with_vertices
         self.vertices_in_layers = vertices_in_layers
 
-    def draw(self, img_width=1200, img_height=1200):
+    def ford_fulkerson(self):
+        path=[]
+        while self.bfs(path):
+            print(path)
+            cfp=path[0][2]
+            for i in range(1, len(path)):
+                if cfp>path[i][2]:
+                    cfp = path[i][2]
+                    
+            for egde in path:
+                if self.adjacencyMatrix_MaxFlow[egde[0]][egde[1]]:
+                    if self.adjacencyMatrix_MaxFlow[egde[0]][egde[1]] - self.adjacencyMatrix_CurrFlow[egde[0]][egde[1]] >=cfp:
+                        self.adjacencyMatrix_CurrFlow[egde[0]][egde[1]] +=cfp
+                    else:
+                        self.adjacencyMatrix_CurrFlow[egde[0]][egde[1]] -= cfp
+
+            path=[]
+        
+        
+        s_out =self.adjacencyMatrix_CurrFlow[0].sum() #fn.data[0][i][0]
+        t_in = self.adjacencyMatrix_CurrFlow[:,-1].sum()
+
+        print(s_out, t_in)
+
+        """ if s_out == t_in:
+            return t_in """
+
+                
+
+
+    def bfs(self, path):
+        d_s = [np.inf for _ in range(len(self.adjacencyMatrix_CurrFlow))]
+        p_s = [-1 for _ in range(len(self.adjacencyMatrix_CurrFlow))]
+        d_s[0] = 0
+
+        queue =[0]
+        while len(queue):
+            v=queue.pop(0)
+            for u in range(len(self.adjacencyMatrix_CurrFlow)):
+                if self.adjacencyMatrix_MaxFlow[v][u] - self.adjacencyMatrix_CurrFlow[v][u]:
+                    if d_s[u] == np.inf:
+                        d_s[u] = d_s[v]+1
+                        p_s[u] = v
+                        queue.append(u)
+            if p_s[len(self.adjacencyMatrix_CurrFlow)-1] !=-1:
+                break
+
+        if p_s[len(self.adjacencyMatrix_CurrFlow)-1] !=-1:
+            v = len(self.adjacencyMatrix_CurrFlow)-1
+            while v != 0:
+                u=p_s[v]
+                # print(u, v, self.adjacencyMatrix_MaxFlow[u][v])
+                path.append([u, v, self.adjacencyMatrix_MaxFlow[u]
+                            [v] - self.adjacencyMatrix_CurrFlow[u][v]])
+                v=p_s[v]
+            
+            path.reverse()
+        return(len(path))
+                    
+
+    def draw(self, img_width=800, img_height=800):
         """ Draws the flow network in new window which pops up. The flow network should be represented by adjacency matrix.
             On each arc there is placed it's current flow F and maximum capacity C in the "F/C" format.
             Drawing a flow network is not always ideal because it draws arcs as straight-line arrows.
@@ -33,7 +93,7 @@ class FlowNetwork:
         layers = lays[1:len(lays)-1]
         # pod 0 obecny, pod 1 max
         n = len(data)
-        print(data)
+        # print(data)
         v_r = img_width / (3 * n) * (1 if n > 2 else 0.5)
 
         root = tk.Tk()
@@ -177,3 +237,4 @@ def generate_am_for_flow_network(n_of_layers=2, weight_min=1, weight_max=10):
         k += 1
 
     return adj_matrix, layers_with_vertices, vertices_in_layers
+

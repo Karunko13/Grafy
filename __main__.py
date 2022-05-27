@@ -149,10 +149,12 @@ if __name__ == '__main__':
     # zestaw2()
     # zestaw3()
     # zestaw4()
-    x, y, z = generate_am_for_flow_network(3)
+    x, y, z = generate_am_for_flow_network(4)
     f1 = FlowNetwork(x, y, z)
     # print(f1.adjacencyMatrix_MaxFlow)
     # print("====================D")
     # print(f1.layers_with_vertices)
-
+    f1.ford_fulkerson()
+    print(f1.adjacencyMatrix_CurrFlow)
     f1.draw()
+    
