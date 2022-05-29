@@ -75,7 +75,7 @@ class FlowNetwork:
             path.reverse()
         return(len(path))
 
-    def draw(self, img_width=800, img_height=800):
+    def draw(self, title="okno"):
 
         matrix_maxFlow = self.adjacencyMatrix_MaxFlow
         matrix_currFlow = self.adjacencyMatrix_CurrFlow
@@ -83,18 +83,19 @@ class FlowNetwork:
         curr_layers = origin_layers[1:len(origin_layers)-1]
 
         num_of_vertices = len(matrix_maxFlow)
-
-        center_x = 800 / 2
-        center_y = 800 / 2
+        img_width = img_height = 800
+        center_x = img_width / 2
+        center_y = img_height / 2
         R = center_x * 3 / 5
         if num_of_vertices > 3:
             r = R / num_of_vertices
         else:
             r = R / num_of_vertices * 0.5
 
-        root = tk.Tk()
-        root.geometry(str(img_height) + "x" + str(img_width))
-        canvas = tk.Canvas(root, height=img_height,
+        window = tk.Tk()
+        window.winfo_toplevel().title(title)
+        window.geometry("800x800")
+        canvas = tk.Canvas(window, height=img_height,
                            width=img_width, bg="white")
 
         vert_xy = []
@@ -188,7 +189,7 @@ class FlowNetwork:
                     canvas.tag_lower(rect, txt)
 
         canvas.pack()
-        root.mainloop()
+        window.mainloop()
 
 
 def generate_am_for_flow_network(n_of_layers=2, weight_min=1, weight_max=10):

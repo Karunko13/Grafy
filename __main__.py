@@ -142,6 +142,24 @@ def zestaw4():
     # zad 4
 
 
+def zestaw5():
+    # ZESTAW 5
+    print("\nZESTAW 5\n")
+
+    # zad1
+    print("\nzad1\n")
+    adj_matrix, layers_with_vertices, vertices_in_layers = generate_am_for_flow_network(
+        3)
+    f1 = FlowNetwork(adj_matrix, layers_with_vertices, vertices_in_layers)
+    f1.draw("FlowNetwork")
+
+    # zad2
+    print("\nzad2\n")
+    f1.ford_fulkerson()
+    print(f1.adjacencyMatrix_CurrFlow)
+    f1.draw("Ford_Fulkerson")
+
+
 if __name__ == '__main__':
 
     os.system('cls')
@@ -149,13 +167,4 @@ if __name__ == '__main__':
     # zestaw2()
     # zestaw3()
     # zestaw4()
-    adj_matrix, layers_with_vertices, vertices_in_layers = generate_am_for_flow_network(
-        3)
-    f1 = FlowNetwork(adj_matrix, layers_with_vertices, vertices_in_layers)
-    f1.draw()
-    # print(f1.adjacencyMatrix_MaxFlow)
-    # print("====================D")
-    # print(f1.layers_with_vertices)
-    f1.ford_fulkerson()
-    print(f1.adjacencyMatrix_CurrFlow)
-    f1.draw()
+    zestaw5()
