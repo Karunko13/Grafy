@@ -1,3 +1,4 @@
+from turtle import width
 import numpy as np
 import tkinter as tk
 import math
@@ -20,170 +21,172 @@ class FlowNetwork:
         self.vertices_in_layers = vertices_in_layers
 
     def ford_fulkerson(self):
-        path=[]
+        path = []
         while self.bfs(path):
             print(path)
-            cfp=path[0][2]
+            cfp = path[0][2]
             for i in range(1, len(path)):
-                if cfp>path[i][2]:
+                if cfp > path[i][2]:
                     cfp = path[i][2]
-                    
+
             for egde in path:
                 if self.adjacencyMatrix_MaxFlow[egde[0]][egde[1]]:
-                    if self.adjacencyMatrix_MaxFlow[egde[0]][egde[1]] - self.adjacencyMatrix_CurrFlow[egde[0]][egde[1]] >=cfp:
-                        self.adjacencyMatrix_CurrFlow[egde[0]][egde[1]] +=cfp
+                    if self.adjacencyMatrix_MaxFlow[egde[0]][egde[1]] - self.adjacencyMatrix_CurrFlow[egde[0]][egde[1]] >= cfp:
+                        self.adjacencyMatrix_CurrFlow[egde[0]][egde[1]] += cfp
                     else:
                         self.adjacencyMatrix_CurrFlow[egde[0]][egde[1]] -= cfp
 
-            path=[]
-        
-        
-        s_out =self.adjacencyMatrix_CurrFlow[0].sum() #fn.data[0][i][0]
-        t_in = self.adjacencyMatrix_CurrFlow[:,-1].sum()
+            path = []
+
+        s_out = self.adjacencyMatrix_CurrFlow[0].sum()  # fn.data[0][i][0]
+        t_in = self.adjacencyMatrix_CurrFlow[:, -1].sum()
 
         print(s_out, t_in)
 
         """ if s_out == t_in:
             return t_in """
 
-                
-
-
     def bfs(self, path):
         d_s = [np.inf for _ in range(len(self.adjacencyMatrix_CurrFlow))]
         p_s = [-1 for _ in range(len(self.adjacencyMatrix_CurrFlow))]
         d_s[0] = 0
 
-        queue =[0]
+        queue = [0]
         while len(queue):
-            v=queue.pop(0)
+            v = queue.pop(0)
             for u in range(len(self.adjacencyMatrix_CurrFlow)):
                 if self.adjacencyMatrix_MaxFlow[v][u] - self.adjacencyMatrix_CurrFlow[v][u]:
                     if d_s[u] == np.inf:
                         d_s[u] = d_s[v]+1
                         p_s[u] = v
                         queue.append(u)
-            if p_s[len(self.adjacencyMatrix_CurrFlow)-1] !=-1:
+            if p_s[len(self.adjacencyMatrix_CurrFlow)-1] != -1:
                 break
 
-        if p_s[len(self.adjacencyMatrix_CurrFlow)-1] !=-1:
+        if p_s[len(self.adjacencyMatrix_CurrFlow)-1] != -1:
             v = len(self.adjacencyMatrix_CurrFlow)-1
             while v != 0:
-                u=p_s[v]
+                u = p_s[v]
                 # print(u, v, self.adjacencyMatrix_MaxFlow[u][v])
                 path.append([u, v, self.adjacencyMatrix_MaxFlow[u]
                             [v] - self.adjacencyMatrix_CurrFlow[u][v]])
-                v=p_s[v]
-            
+                v = p_s[v]
+
             path.reverse()
         return(len(path))
-                    
 
     def draw(self, img_width=800, img_height=800):
-        """ Draws the flow network in new window which pops up. The flow network should be represented by adjacency matrix.
-            On each arc there is placed it's current flow F and maximum capacity C in the "F/C" format.
-            Drawing a flow network is not always ideal because it draws arcs as straight-line arrows.
-                Therefore, sometimes arcs overlap each other and it's difficult to match arc and it's flow.
-                img_width - width of the popped window (in pixels)
-                img_height - height of the popped window (in pixels)"""
 
-        data = self.adjacencyMatrix_MaxFlow
-        lays = self.vertices_in_layers
-        data2 = self.adjacencyMatrix_CurrFlow
-        layers = lays[1:len(lays)-1]
-        # pod 0 obecny, pod 1 max
-        n = len(data)
-        # print(data)
-        v_r = img_width / (3 * n) * (1 if n > 2 else 0.5)
+        matrix_maxFlow = self.adjacencyMatrix_MaxFlow
+        matrix_currFlow = self.adjacencyMatrix_CurrFlow
+        origin_layers = self.vertices_in_layers
+        curr_layers = origin_layers[1:len(origin_layers)-1]
+
+        num_of_vertices = len(matrix_maxFlow)
+
+        center_x = 800 / 2
+        center_y = 800 / 2
+        R = center_x * 3 / 5
+        if num_of_vertices > 3:
+            r = R / num_of_vertices
+        else:
+            r = R / num_of_vertices * 0.5
 
         root = tk.Tk()
         root.geometry(str(img_height) + "x" + str(img_width))
         canvas = tk.Canvas(root, height=img_height,
                            width=img_width, bg="white")
 
-        positions = [[0.0] * 2 for _ in range(n)]
+        vert_xy = []
+        for i in range(num_of_vertices):
+            vert_xy.append([0.0, 0.0])
 
         draw_layers = [[0]]
-        if layers is not None:
-            v = 1
-            for layer in layers:
-                layer_to_add = []
-                for i in range(layer):
-                    layer_to_add.append(v)
-                    v += 1
-                draw_layers.append(layer_to_add)
-        else:
-            num_inner_vertices = n - 2
-            num_inner_layers = math.ceil(math.sqrt(num_inner_vertices))
-            vertices_to_add = [i for i in range(1, n - 1)]
-            for i in range(num_inner_layers, 0, -1):
-                layer_to_add = []
-                num_of_vertices_to_add = math.ceil(
-                    len(vertices_to_add) / float(i))
-                for j in range(num_of_vertices_to_add):
-                    layer_to_add.append(vertices_to_add[0])
-                    vertices_to_add.remove(vertices_to_add[0])
-                draw_layers.append(layer_to_add)
-        draw_layers.append([n-1])
+
+        # stworzenie "tablicy warstaw"
+        temp = 1
+        for layer in curr_layers:
+            next_layer = []
+            for i in range(layer):
+                next_layer.append(temp)
+                temp += 1
+            draw_layers.append(next_layer)
+        draw_layers.append([num_of_vertices-1])
+        # draw layers reprezentuje warstwy rysowane w jednej płaszczyźnie
         num_layers = len(draw_layers)
 
-        h_break = img_width / num_layers
+        # podzielenie obszaru rysowania na rowne czesci
+        layers_length = img_width / num_layers
 
         for i in range(len(draw_layers)):
-            x_pos = h_break/2 + h_break * i
-            v_break = img_height / (len(draw_layers[i])+1)
-
             for j in range(len(draw_layers[i])):
-                positions[draw_layers[i][j]][0], positions[draw_layers[i]
-                                                           [j]][1] = x_pos, (v_break + j * v_break)
+                vert_xy[draw_layers[i][j]][0], vert_xy[draw_layers[i][j]][1] = layers_length/2 + layers_length * \
+                    i, (img_height / (len(draw_layers[i])+1) +
+                        j * img_height / (len(draw_layers[i])+1))
 
-        texts = [str(i) for i in range(n)]
-        texts[0], texts[n-1] = 's', 't'
-        for i in range(n):
-            canvas.create_oval(positions[i][0] - v_r, positions[i][1] - v_r,
-                               positions[i][0] + v_r, positions[i][1] + v_r,
+        # podpisanie pierwszego i ostatniego wierzchołka
+        texts = [str(i) for i in range(num_of_vertices)]
+        texts[0], texts[num_of_vertices-1] = 'P', 'K'
+
+        # rysowanie wierzchołków
+        for i in range(num_of_vertices):
+            canvas.create_oval(vert_xy[i][0] - r, vert_xy[i][1] - r,
+                               vert_xy[i][0] + r, vert_xy[i][1] + r,
                                fill="lime", outline="black")
-            canvas.create_text(positions[i][0], positions[i][1],
-                               fill="black", text=texts[i], font=("Verdana", 15))
+            canvas.create_text(vert_xy[i][0], vert_xy[i][1],
+                               fill="black", text=texts[i], font=("Comic Sans", int(3 * r / 4), "bold"))
 
-        for i in range(n):
-            for j in range(n):
-                if data[i][j] > 0:
-                    a = None
-                    v1_x = positions[i][0]
-                    v2_x = positions[j][0]
+        # rysowanie połączeń(krawędzi ze strzałkami)
+        for i in range(num_of_vertices):
+            for j in range(num_of_vertices):
+                if matrix_maxFlow[i][j] > 0:
+                    sign_of_vector = None
+                    ver1_x = vert_xy[i][0]
+                    ver1_y = vert_xy[i][1]
 
-                    v1_y = positions[i][1]
-                    v2_y = positions[j][1]
+                    ver2_x = vert_xy[j][0]
+                    ver2_y = vert_xy[j][1]
 
-                    equal_x = math.fabs(v2_x - v1_x) <= 10 ** -3
-                    equal_y = math.fabs(v2_y - v1_y) <= 10 ** -3
-                    if not equal_x:
-                        a = -(v2_y - v1_y) / (v2_x - v1_x)
+                    if not math.fabs(ver2_x - ver1_x) <= 10 ** -3:
+                        sign_of_vector = -(ver2_y - ver1_y) / (ver2_x - ver1_x)
 
-                    x_sign = 1 if v1_x < v2_x else -1
-                    y_sign = 1 if v1_y < v2_y else -1
+                    if ver1_x < ver2_x:
+                        x_orientation = 1
+                    else:
+                        x_orientation = -1
 
-                    x = 0 if equal_x else v_r if equal_y else math.sqrt(
-                        v_r ** 2 / (a ** 2 + 1))
-                    y = 0 if equal_y else v_r if equal_x else math.fabs(a * x)
-                    canvas.create_line(v1_x + x_sign * x, v1_y + y_sign * y,
-                                       v2_x - x_sign * x, v2_y - y_sign * y, fill="black", arrow=tk.LAST)
+                    if ver1_y < ver2_y:
+                        y_orientation = 1
+                    else:
+                        y_orientation = -1
 
-        for i in range(n):
-            for j in range(n):
-                if data[i][j] > 0:
-                    txt = canvas.create_text((positions[i][0] + positions[j][0]) / 2,
-                                             (positions[i][1] +
-                                              positions[j][1]) / 2,
-                                             text=f'{data2[i][j]}/{data[i][j]}',
+                    if math.fabs(ver2_x - ver1_x) <= 10 ** -3:
+                        x = 0
+                        y = r
+                    elif math.fabs(ver2_y - ver1_y) <= 10 ** -3:
+                        x = r
+                        y = 0
+                    else:
+                        x = math.sqrt(
+                            r ** 2 / (sign_of_vector ** 2 + 1))
+                        y = math.fabs(sign_of_vector * x)
+
+                    canvas.create_line(ver1_x + x_orientation * x, ver1_y + y_orientation * y,
+                                       ver2_x - x_orientation * x, ver2_y - y_orientation * y, fill="black", arrow=tk.LAST, width=1)
+        # rysowanie wag
+        for i in range(num_of_vertices):
+            for j in range(num_of_vertices):
+                if matrix_maxFlow[i][j] > 0:
+                    txt = canvas.create_text((vert_xy[i][0] + vert_xy[j][0]) / 2,
+                                             (vert_xy[i][1] +
+                                              vert_xy[j][1]) / 2,
+                                             text=f'{matrix_currFlow[i][j]}/{matrix_maxFlow[i][j]}',
                                              font=("Comic Sans", 12, "bold"))
 
                     rect = canvas.create_rectangle(
                         canvas.bbox(txt), fill="white", outline="black")
                     canvas.tag_lower(rect, txt)
 
-        print("Flow network is being drawn.")
         canvas.pack()
         root.mainloop()
 
@@ -237,4 +240,3 @@ def generate_am_for_flow_network(n_of_layers=2, weight_min=1, weight_max=10):
         k += 1
 
     return adj_matrix, layers_with_vertices, vertices_in_layers
-
