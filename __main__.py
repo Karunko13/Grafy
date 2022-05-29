@@ -9,6 +9,7 @@ from utils.euler import get_euler_cycle, pretty_cycle_print
 from utils.dijkstra import *
 from utils.generators import *
 from utils.centres import *
+from utils.page_rank import *
 
 
 def zestaw1():
@@ -160,6 +161,18 @@ def zestaw5():
     f1.draw("Ford_Fulkerson")
 
 
+def zestaw6():
+    # ZESTAW 6
+    print("\nZESTAW 6\n")
+
+    # zad1
+    print("\nzad1")
+    g1 = generate_digraph(12, 0.7)
+   # g1.print_all_representations()
+    page_rank_1(g1, 0.15)
+    page_rank_2(g1, 0.15)
+
+
 if __name__ == '__main__':
 
     os.system('cls')
@@ -168,3 +181,4 @@ if __name__ == '__main__':
     # zestaw3()
     # zestaw4()
     zestaw5()
+    zestaw6()
