@@ -149,15 +149,13 @@ def zestaw5():
 
     # zad1
     print("\nzad1\n")
-    adj_matrix, layers_with_vertices, vertices_in_layers = generate_am_for_flow_network(
-        3)
+    adj_matrix, layers_with_vertices, vertices_in_layers = generate_am_for_flow_network(3)
     f1 = FlowNetwork(adj_matrix, layers_with_vertices, vertices_in_layers)
     f1.draw("FlowNetwork")
-
     # zad2
     print("\nzad2\n")
     f1.ford_fulkerson()
-    print(f1.adjacencyMatrix_CurrFlow)
+    f1.print_flow()
     f1.draw("Ford_Fulkerson")
 
 
@@ -168,7 +166,8 @@ def zestaw6():
     # zad1
     print("\nzad1")
     g1 = generate_digraph(12, 0.7)
-   # g1.print_all_representations()
+    g1.print_all_representations()
+    
     page_rank_1(g1, 0.15)
     page_rank_2(g1, 0.15)
 

@@ -23,7 +23,6 @@ class FlowNetwork:
     def ford_fulkerson(self):
         path = []
         while self.bfs(path):
-            print(path)
             cfp = path[0][2]
             for i in range(1, len(path)):
                 if cfp > path[i][2]:
@@ -41,10 +40,7 @@ class FlowNetwork:
         s_out = self.adjacencyMatrix_CurrFlow[0].sum()  # fn.data[0][i][0]
         t_in = self.adjacencyMatrix_CurrFlow[:, -1].sum()
 
-        print(s_out, t_in)
-
-        """ if s_out == t_in:
-            return t_in """
+        print("Przepływ wypływający z początku: "+str(s_out)+"\nPrzepływ wpływający do końca: "+str(t_in))
 
     def bfs(self, path):
         d_s = [np.inf for _ in range(len(self.adjacencyMatrix_CurrFlow))]
@@ -192,10 +188,16 @@ class FlowNetwork:
         window.mainloop()
 
 
+    def print_flow(self):
+        for i in range(0, len(self.adjacencyMatrix_MaxFlow)):
+            for j in range(0, len(self.adjacencyMatrix_MaxFlow)):
+                if self.adjacencyMatrix_MaxFlow[i][j]>0:
+                    print("Krawędź: "+str(i)+"->"+str(j)+", przepływ: "+str(self.adjacencyMatrix_CurrFlow[i][j])+"/"+str(self.adjacencyMatrix_MaxFlow[i][j]))
+
+
 def generate_am_for_flow_network(n_of_layers=2, weight_min=1, weight_max=10):
     vertices_in_layers = np.random.randint(2, n_of_layers+1, (n_of_layers+2))
     vertices_in_layers[0] = vertices_in_layers[n_of_layers+1] = 1
-    # print(vertices_in_layers)
 
     adj_matrix = np.zeros(
         (sum(vertices_in_layers), sum(vertices_in_layers)), dtype=int)
@@ -208,8 +210,6 @@ def generate_am_for_flow_network(n_of_layers=2, weight_min=1, weight_max=10):
             layer_to_add.append(v)
             v += 1
         layers_with_vertices.append(layer_to_add)
-
-    # print(layers_with_vertices)
 
     for i in range(len(layers_with_vertices)-1):
         layer1 = layers_with_vertices[i]
